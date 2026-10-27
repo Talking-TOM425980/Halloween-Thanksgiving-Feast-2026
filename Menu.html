@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Halloween Thanksgiving Feast Menu</title>
+    <title>Halloween & Thanksgiving Feast Menu</title>
     <style>
         body {
-            background-color: #0d1b1e;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+            background-color: #121015; /* Dark spooky background */
+            color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 40px;
         }
@@ -16,69 +16,77 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 60px;
+            border-bottom: 1px solid #2d2633;
+            padding-bottom: 20px;
         }
         .logo {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             letter-spacing: 1px;
-            color: #00ff88;
-        }
-        .nav-buttons button {
-            background: transparent;
-            border: 1px solid #ffffff;
-            color: #ffffff;
-            padding: 10px 20px;
-            margin-left: 10px;
-            border-radius: 5px;
-            cursor: pointer;
+            color: #ff7518; /* Halloween Pumpkin Orange */
         }
         .nav-buttons .order-btn {
-            background-color: #00ff88;
+            background-color: #ff7518;
             border: none;
-            color: #000000;
+            color: #ffffff;
+            padding: 10px 22px;
+            font-size: 15px;
             font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .nav-buttons .order-btn:hover {
+            background-color: #e06312;
         }
         .content {
-            max-width: 600px;
+            max-width: 650px;
         }
         h1 {
             font-size: 48px;
             line-height: 1.2;
             margin-bottom: 20px;
+            color: #ffffff;
         }
         h1 span {
-            color: #00ff88;
+            color: #e69a28; /* Harvest Autumn Gold */
         }
         p {
-            color: #b0c4de;
-            font-size: 16px;
+            color: #c9b9d3;
+            font-size: 17px;
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         .main-order-btn {
-            background-color: #00ff88;
+            background: linear-gradient(135deg, #ff7518, #e69a28);
             border: none;
-            color: #000000;
-            padding: 15px 30px;
-            font-size: 16px;
+            color: #ffffff;
+            padding: 16px 32px;
+            font-size: 17px;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 117, 24, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .main-order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 117, 24, 0.4);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">🎃 HALLOWEEN FEAST</div>
+        <div class="logo">🎃 🍁 AUTUMN FEAST</div>
         <div class="nav-buttons">
             <button class="order-btn">Order Now!</button>
         </div>
     </header>
 
     <div class="content">
-        <h1>Halloween's Here, <br><span>So Is Our Feast!</span></h1>
-        <p>Halloween is here, so is our feast! From the juicy rotisserie chicken to the cold Fantas, we have it all. Enjoy your meal with some nice old Mac and cheese, along with mashed potatoes and gravy. Dive into a spooktacular evening filled with delicious bites, seasonal treats, and all your favorite comfort foods crafted to make this holiday celebration unforgettable.</p>
+        <h1>Halloween & Thanksgiving,<br><span>So Is Our Feast!</span></h1>
+        <p>Halloween is here, and so is our grand feast! From the juicy rotisserie chicken to the cold Fantas, we have it all. Enjoy your meal with some nice old Mac and cheese, along with mashed potatoes and gravy. Dive into a spooktacular and cozy evening filled with delicious bites, seasonal treats, and all your favorite comfort foods crafted to make this holiday celebration unforgettable.</p>
         <button class="main-order-btn">Order Now!</button>
     </div>
 
