@@ -2,76 +2,196 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halloween & Thanksgiving Feast Menu</title>
     <style>
-        body {
-            background-color: #121015; /* Dark spooky background */
-            color: #f3f4f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 40px;
+        :root {
+            --bg-color: #0d0a12;
+            --card-bg: #1a1423;
+            --primary-orange: #ff7518;
+            --accent-gold: #e69a28;
+            --text-main: #f3f4f6;
+            --text-sub: #c9b9d3;
+            --border-color: #2d2633;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         header {
+            width: 100%;
+            max-width: 900px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 60px;
-            border-bottom: 1px solid #2d2633;
-            padding-bottom: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
         }
+
         .logo {
             font-size: 22px;
             font-weight: bold;
+            color: var(--primary-orange);
             letter-spacing: 1px;
-            color: #ff7518; /* Halloween Pumpkin Orange */
         }
-        .nav-buttons .order-btn {
-            background-color: #ff7518;
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-orange), var(--accent-gold));
             border: none;
             color: #ffffff;
-            padding: 10px 22px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .nav-buttons .order-btn:hover {
-            background-color: #e06312;
-        }
-        .content {
-            max-width: 650px;
-        }
-        h1 {
-            font-size: 48px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-        h1 span {
-            color: #e69a28; /* Harvest Autumn Gold */
-        }
-        p {
-            color: #c9b9d3;
-            font-size: 17px;
-            line-height: 1.6;
-            margin-bottom: 35px;
-        }
-        .main-order-btn {
-            background: linear-gradient(135deg, #ff7518, #e69a28);
-            border: none;
-            color: #ffffff;
-            padding: 16px 32px;
-            font-size: 17px;
+            padding: 12px 24px;
+            font-size: 16px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(255, 117, 24, 0.3);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .main-order-btn:hover {
+
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 117, 24, 0.4);
+            box-shadow: 0 6px 16px rgba(255, 117, 24, 0.5);
+        }
+
+        .hero {
+            max-width: 800px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: var(--accent-gold);
+        }
+
+        p.desc {
+            color: var(--text-sub);
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--primary-orange);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(255, 117, 24, 0.2);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+            color: var(--primary-orange);
+        }
+
+        .modal-content input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #0d0a12;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        /* Order Table Styling */
+        .menu-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .menu-table th, .menu-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-table th {
+            color: var(--accent-gold);
+        }
+
+        .limit-badge {
+            font-size: 12px;
+            color: #ff4d4d;
+            margin-left: 6px;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: var(--border-color);
+            color: #fff;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Order Review Box */
+        .review-section {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border: 1px dashed var(--accent-gold);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .review-section h3 {
+            color: var(--primary-orange);
+            margin-bottom: 15px;
+        }
+
+        .review-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
         }
     </style>
 </head>
@@ -79,16 +199,160 @@
 
     <header>
         <div class="logo">🎃 🍁 AUTUMN FEAST</div>
-        <div class="nav-buttons">
-            <button class="order-btn">Order Now!</button>
-        </div>
+        <button class="btn" onclick="startOrder()">Order Now!</button>
     </header>
 
-    <div class="content">
-        <h1>Halloween & Thanksgiving,<br><span>So Is Our Feast!</span></h1>
-        <p>Halloween is here, and so is our grand feast! From the juicy rotisserie chicken to the cold Fantas, we have it all. Enjoy your meal with some nice old Mac and cheese, along with mashed potatoes and gravy. Dive into a spooktacular and cozy evening filled with delicious bites, seasonal treats, and all your favorite comfort foods crafted to make this holiday celebration unforgettable.</p>
-        <button class="main-order-btn">Order Now!</button>
+    <div class="hero">
+        <h1>Halloween's Here,<br><span>So Is Our Feast!</span></h1>
+        <p class="desc">Halloween is here, and so is our grand feast! From the juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your meal with some nice old Mac and cheese, along with mashed potatoes and gravy. Dive into a spooktacular and cozy evening filled with delicious comfort foods crafted to make this holiday celebration unforgettable.</p>
+        <button class="btn" onclick="startOrder()">Order Now!</button>
     </div>
 
+    <!-- Step 1: Name Prompt Modal -->
+    <div class="modal-overlay" id="nameModal">
+        <div class="modal-content">
+            <h2>Welcome to the Feast!</h2>
+            <p style="margin-bottom: 15px; color: var(--text-sub);">What is your name?</p>
+            <input type="text" id="userNameInput" placeholder="Enter your name">
+            <button class="btn" style="width: 100%;" onclick="saveName()">Continue to Order</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Order Table Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h2 id="greetingHeader">Customize Your Order</h2>
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rotisserie Chicken</td>
+                        <td>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty('chicken', -1)">-</button>
+                                <span id="qty-chicken">0</span>
+                                <button class="qty-btn" onclick="changeQty('chicken', 1)">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mac and Cheese <span class="limit-badge">(max 2)</span></td>
+                        <td>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty('mac', -1)">-</button>
+                                <span id="qty-mac">0</span>
+                                <button class="qty-btn" onclick="changeQty('mac', 1, 2)">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mashed Potatoes & Gravy <span class="limit-badge">(max 2)</span></td>
+                        <td>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty('potatoes', -1)">-</button>
+                                <span id="qty-potatoes">0</span>
+                                <button class="qty-btn" onclick="changeQty('potatoes', 1, 2)">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cold Fanta <span class="limit-badge">(max 2)</span></td>
+                        <td>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty('fanta', -1)">-</button>
+                                <span id="qty-fanta">0</span>
+                                <button class="qty-btn" onclick="changeQty('fanta', 1, 2)">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn" style="width: 100%;" onclick="submitOrder()">Submit Order</button>
+        </div>
+    </div>
+
+    <!-- Step 3: Order Review Section -->
+    <div class="review-section" id="reviewSection">
+        <h3>📋 Order Summary</h3>
+        <p style="margin-bottom: 15px; color: var(--accent-gold);" id="customerNameReview"></p>
+        <div id="reviewItems"></div>
+    </div>
+
+    <script>
+        let customerName = "";
+        const order = {
+            chicken: 0,
+            mac: 0,
+            potatoes: 0,
+            fanta: 0
+        };
+
+        const itemNames = {
+            chicken: "Rotisserie Chicken",
+            mac: "Mac and Cheese",
+            potatoes: "Mashed Potatoes & Gravy",
+            fanta: "Cold Fanta"
+        };
+
+        function startOrder() {
+            document.getElementById('nameModal').style.display = 'flex';
+        }
+
+        function saveName() {
+            const input = document.getElementById('userNameInput').value.trim();
+            if (!input) {
+                alert("Please enter your name!");
+                return;
+            }
+            customerName = input;
+            document.getElementById('nameModal').style.display = 'none';
+            document.getElementById('greetingHeader').innerText = `Welcome, ${customerName}!`;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function changeQty(item, change, max = Infinity) {
+            let current = order[item] + change;
+            if (current < 0) current = 0;
+            if (current > max) {
+                alert(`You can order a maximum of ${max} for this item.`);
+                return;
+            }
+            order[item] = current;
+            document.getElementById(`qty-${item}`).innerText = current;
+        }
+
+        function submitOrder() {
+            const totalItems = Object.values(order).reduce((a, b) => a + b, 0);
+            if (totalItems === 0) {
+                alert("Please select at least one item to order.");
+                return;
+            }
+
+            document.getElementById('orderModal').style.display = 'none';
+            
+            // Build Review Section
+            const reviewSection = document.getElementById('reviewSection');
+            const reviewItemsContainer = document.getElementById('reviewItems');
+            document.getElementById('customerNameReview').innerText = `Customer: ${customerName}`;
+            
+            reviewItemsContainer.innerHTML = "";
+            for (const [key, qty] of Object.entries(order)) {
+                if (qty > 0) {
+                    const row = document.createElement('div');
+                    row.className = 'review-item';
+                    row.innerHTML = `<span>${itemNames[key]}</span> <strong>x${qty}</strong>`;
+                    reviewItemsContainer.appendChild(row);
+                }
+            }
+
+            reviewSection.style.display = 'block';
+            reviewSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
