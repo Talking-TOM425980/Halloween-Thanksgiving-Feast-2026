@@ -6,227 +6,317 @@
     <title>Halloween & Thanksgiving Feast Menu</title>
     <style>
         :root {
-            --bg-color: #0d0a12;
-            --card-bg: #1a1423;
-            --primary-orange: #ff7518;
-            --accent-gold: #e69a28;
-            --text-main: #f3f4f6;
-            --text-sub: #c9b9d3;
-            --border-color: #2d2633;
+            --bg-color: #11141d;
+            --card-bg: #1c212d;
+            --card-border: #2e3646;
+            --primary-orange: #ff7300;
+            --orange-glow: rgba(255, 115, 0, 0.25);
+            --accent-gold: #f5a623;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --success-green: #22c55e;
+            --danger-red: #ef4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
+        /* Header Navigation */
         header {
             width: 100%;
-            max-width: 900px;
+            max-width: 850px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 40px;
+            padding: 16px 24px;
+            background: rgba(28, 33, 45, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-bottom: 48px;
         }
 
         .logo {
-            font-size: 22px;
-            font-weight: bold;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--primary-orange);
-            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
+        /* Buttons */
         .btn {
-            background: linear-gradient(135deg, var(--primary-orange), var(--accent-gold));
+            background: linear-gradient(135deg, var(--primary-orange), #e05300);
             border: none;
             color: #ffffff;
             padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 117, 24, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px var(--orange-glow);
+            transition: all 0.2s ease;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 117, 24, 0.5);
+            box-shadow: 0 6px 20px rgba(255, 115, 0, 0.4);
         }
 
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-sub);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        /* Hero Banner */
         .hero {
-            max-width: 800px;
+            max-width: 750px;
             text-align: center;
             margin-bottom: 40px;
+            padding: 20px;
         }
 
         h1 {
-            font-size: 42px;
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.15;
             margin-bottom: 20px;
+            letter-spacing: -0.5px;
         }
 
         h1 span {
-            color: var(--accent-gold);
+            background: linear-gradient(135deg, var(--primary-orange), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         p.desc {
             color: var(--text-sub);
             font-size: 18px;
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
 
-        /* Modal Overlay */
+        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(10, 12, 18, 0.85);
+            backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
         }
 
-        .modal-content {
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
             background: var(--card-bg);
-            border: 1px solid var(--primary-orange);
-            border-radius: 12px;
-            padding: 30px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(255, 117, 24, 0.2);
+            max-width: 520px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--orange-glow);
         }
 
-        .modal-content h2 {
-            margin-bottom: 15px;
-            color: var(--primary-orange);
+        .modal-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
         }
 
-        .modal-content input[type="text"] {
+        .modal-card p.sub {
+            color: var(--text-sub);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Form Inputs */
+        input[type="text"] {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: #0d0a12;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: #121620;
             color: #fff;
             font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        /* Order Table Styling */
+        input[type="text"]:focus {
+            border-color: var(--primary-orange);
+        }
+
+        /* Order Table */
         .menu-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .menu-table th, .menu-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
         }
 
         .menu-table th {
-            color: var(--accent-gold);
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .limit-badge {
+        .menu-table td {
+            padding: 16px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+        }
+
+        .limit-tag {
             font-size: 12px;
-            color: #ff4d4d;
+            color: var(--accent-gold);
+            background: rgba(245, 166, 35, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
             margin-left: 6px;
         }
 
         .qty-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: flex-end;
+            gap: 12px;
         }
 
         .qty-btn {
-            background: var(--border-color);
-            color: #fff;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
+            background: #2a3142;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
         }
 
-        /* Order Review Box */
-        .review-section {
-            display: none;
-            width: 100%;
-            max-width: 600px;
-            background: var(--card-bg);
-            border: 1px dashed var(--accent-gold);
+        .qty-btn:hover {
+            background: #3b4459;
+        }
+
+        /* Order Review Container */
+        .review-list {
+            background: #121620;
+            border: 1px solid var(--card-border);
             border-radius: 12px;
-            padding: 25px;
-            margin-top: 30px;
-        }
-
-        .review-section h3 {
-            color: var(--primary-orange);
-            margin-bottom: 15px;
+            padding: 16px;
+            margin-bottom: 24px;
         }
 
         .review-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 15px;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Success Card */
+        .success-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
 
+    <!-- Header Navigation -->
     <header>
-        <div class="logo">🎃 🍁 AUTUMN FEAST</div>
-        <button class="btn" onclick="startOrder()">Order Now!</button>
+        <div class="logo">🎃 🍁 Autumn Feast</div>
+        <button class="btn" id="navOrderBtn" onclick="startOrder()">Order Now!</button>
     </header>
 
+    <!-- Main Hero Section -->
     <div class="hero">
         <h1>Halloween's Here,<br><span>So Is Our Feast!</span></h1>
         <p class="desc">Halloween is here, and so is our grand feast! From the juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your meal with some nice old Mac and cheese, along with mashed potatoes and gravy. Dive into a spooktacular and cozy evening filled with delicious comfort foods crafted to make this holiday celebration unforgettable.</p>
-        <button class="btn" onclick="startOrder()">Order Now!</button>
+        <button class="btn" id="heroOrderBtn" onclick="startOrder()">Order Now!</button>
     </div>
 
     <!-- Step 1: Name Prompt Modal -->
     <div class="modal-overlay" id="nameModal">
-        <div class="modal-content">
-            <h2>Welcome to the Feast!</h2>
-            <p style="margin-bottom: 15px; color: var(--text-sub);">What is your name?</p>
-            <input type="text" id="userNameInput" placeholder="Enter your name">
-            <button class="btn" style="width: 100%;" onclick="saveName()">Continue to Order</button>
+        <div class="modal-card">
+            <h2>Welcome to the Feast! 🎉</h2>
+            <p class="sub">Please enter your name to start your order.</p>
+            <input type="text" id="userNameInput" placeholder="Enter your full name" autocomplete="off">
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('nameModal')">Cancel</button>
+                <button class="btn" style="flex: 2;" onclick="saveName()">Continue to Menu</button>
+            </div>
         </div>
     </div>
 
-    <!-- Step 2: Order Table Modal -->
+    <!-- Step 2: Order Items Modal -->
     <div class="modal-overlay" id="orderModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <h2 id="greetingHeader">Customize Your Order</h2>
+        <div class="modal-card">
+            <h2 id="greetingHeader">Select Items</h2>
+            <p class="sub">Choose your delicious feast portion limits below.</p>
+            
             <table class="menu-table">
                 <thead>
                     <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
+                        <th>Dish</th>
+                        <th style="text-align: right;">Quantity</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -241,7 +331,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Mac and Cheese <span class="limit-badge">(max 2)</span></td>
+                        <td>Mac and Cheese <span class="limit-tag">max 2</span></td>
                         <td>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="changeQty('mac', -1)">-</button>
@@ -251,7 +341,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Mashed Potatoes & Gravy <span class="limit-badge">(max 2)</span></td>
+                        <td>Mashed Potatoes <span class="limit-tag">max 2</span></td>
                         <td>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="changeQty('potatoes', -1)">-</button>
@@ -261,7 +351,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Cold Fanta <span class="limit-badge">(max 2)</span></td>
+                        <td>Cold Fanta <span class="limit-tag">max 2</span></td>
                         <td>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="changeQty('fanta', -1)">-</button>
@@ -272,19 +362,45 @@
                     </tr>
                 </tbody>
             </table>
-            <button class="btn" style="width: 100%;" onclick="submitOrder()">Submit Order</button>
+
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('orderModal')">Back</button>
+                <button class="btn" style="flex: 2;" onclick="openSummary()">Review Order</button>
+            </div>
         </div>
     </div>
 
-    <!-- Step 3: Order Review Section -->
-    <div class="review-section" id="reviewSection">
-        <h3>📋 Order Summary</h3>
-        <p style="margin-bottom: 15px; color: var(--accent-gold);" id="customerNameReview"></p>
-        <div id="reviewItems"></div>
+    <!-- Step 3: Order Summary Modal -->
+    <div class="modal-overlay" id="summaryModal">
+        <div class="modal-card">
+            <h2>Review Your Order 📋</h2>
+            <p class="sub" id="customerNameReview"></p>
+
+            <div class="review-list" id="reviewItemsContainer"></div>
+
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="backToMenu()">Edit Items</button>
+                <button class="btn" style="flex: 2;" onclick="placeOrder()">Place Order ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: Final Confirmation Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-card">
+            <div class="success-box">
+                <div class="success-icon">🍗</div>
+                <h2>Order Placed Successfully!</h2>
+                <p class="sub" style="margin-top: 8px;">Thank you! Your order is locked in and being prepared. Enjoy your Autumn Feast!</p>
+                <button class="btn" style="width: 100%; margin-top: 16px;" onclick="closeModal('successModal')">Close</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let customerName = "";
+        let hasPlacedOrder = false;
+
         const order = {
             chicken: 0,
             mac: 0,
@@ -300,17 +416,25 @@
         };
 
         function startOrder() {
+            if (hasPlacedOrder) {
+                alert("You have already placed your order! You can only submit one order per visit.");
+                return;
+            }
             document.getElementById('nameModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
         }
 
         function saveName() {
             const input = document.getElementById('userNameInput').value.trim();
             if (!input) {
-                alert("Please enter your name!");
+                alert("Please enter your name to continue!");
                 return;
             }
             customerName = input;
-            document.getElementById('nameModal').style.display = 'none';
+            closeModal('nameModal');
             document.getElementById('greetingHeader').innerText = `Welcome, ${customerName}!`;
             document.getElementById('orderModal').style.display = 'flex';
         }
@@ -319,39 +443,56 @@
             let current = order[item] + change;
             if (current < 0) current = 0;
             if (current > max) {
-                alert(`You can order a maximum of ${max} for this item.`);
+                alert(`Maximum allowed quantity for ${itemNames[item]} is ${max}.`);
                 return;
             }
             order[item] = current;
             document.getElementById(`qty-${item}`).innerText = current;
         }
 
-        function submitOrder() {
+        function openSummary() {
             const totalItems = Object.values(order).reduce((a, b) => a + b, 0);
             if (totalItems === 0) {
-                alert("Please select at least one item to order.");
+                alert("Please select at least 1 item before proceeding!");
                 return;
             }
 
-            document.getElementById('orderModal').style.display = 'none';
+            closeModal('orderModal');
+            document.getElementById('customerNameReview').innerText = `Order for: ${customerName}`;
             
-            // Build Review Section
-            const reviewSection = document.getElementById('reviewSection');
-            const reviewItemsContainer = document.getElementById('reviewItems');
-            document.getElementById('customerNameReview').innerText = `Customer: ${customerName}`;
-            
-            reviewItemsContainer.innerHTML = "";
+            const container = document.getElementById('reviewItemsContainer');
+            container.innerHTML = "";
+
             for (const [key, qty] of Object.entries(order)) {
                 if (qty > 0) {
                     const row = document.createElement('div');
                     row.className = 'review-item';
                     row.innerHTML = `<span>${itemNames[key]}</span> <strong>x${qty}</strong>`;
-                    reviewItemsContainer.appendChild(row);
+                    container.appendChild(row);
                 }
             }
 
-            reviewSection.style.display = 'block';
-            reviewSection.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('summaryModal').style.display = 'flex';
+        }
+
+        function backToMenu() {
+            closeModal('summaryModal');
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function placeOrder() {
+            hasPlacedOrder = true;
+            closeModal('summaryModal');
+            document.getElementById('successModal').style.display = 'flex';
+
+            // Lock order buttons on the main screen
+            const navBtn = document.getElementById('navOrderBtn');
+            const heroBtn = document.getElementById('heroOrderBtn');
+
+            navBtn.innerText = "Order Placed";
+            heroBtn.innerText = "Order Placed";
+            navBtn.disabled = true;
+            heroBtn.disabled = true;
         }
     </script>
 </body>
