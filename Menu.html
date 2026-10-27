@@ -3,84 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halloween & Thanksgiving Feast Menu</title>
+    <title>Halloween & Thanksgiving Feast</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #11141d;
-            --card-bg: #1c212d;
-            --card-border: #2e3646;
-            --primary-orange: #ff7300;
-            --orange-glow: rgba(255, 115, 0, 0.25);
-            --accent-gold: #f5a623;
+            --bg-dark: #0b0f19;
+            --bg-card: rgba(21, 29, 46, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-emerald: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.25);
+            --accent-orange: #f97316;
+            --accent-glow: rgba(249, 115, 22, 0.3);
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
-            --success-green: #22c55e;
-            --danger-red: #ef4444;
+            --text-muted: #64748b;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
-            min-height: 100vh;
-            padding: 24px;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            position: relative;
         }
 
-        /* Header Navigation */
-        header {
+        /* Ambient Background Glows */
+        .ambient-glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.12) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Full Screen Container Layout */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
             width: 100%;
-            max-width: 850px;
+            height: 100%;
+            padding: 32px 48px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sleek Header Bar */
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 24px;
-            background: rgba(28, 33, 45, 0.8);
-            backdrop-filter: blur(12px);
+            padding: 16px 28px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            margin-bottom: 48px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .logo {
             font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-orange);
+            font-weight: 800;
+            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--accent-orange), #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* Buttons */
         .btn {
-            background: linear-gradient(135deg, var(--primary-orange), #e05300);
+            background: linear-gradient(135deg, var(--primary-emerald), #059669);
             border: none;
             color: #ffffff;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 15px;
-            font-weight: 600;
-            border-radius: 10px;
+            font-weight: 700;
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 14px var(--orange-glow);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px var(--primary-glow);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 115, 0, 0.4);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            filter: brightness(1.05);
         }
 
         .btn:disabled {
-            background: #334155;
-            color: #64748b;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
             cursor: not-allowed;
             box-shadow: none;
         }
@@ -89,134 +142,157 @@
             background: transparent;
             border: 1px solid var(--card-border);
             color: var(--text-sub);
+            box-shadow: none;
         }
 
         .btn-secondary:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
+            transform: none;
         }
 
-        /* Hero Banner */
-        .hero {
-            max-width: 750px;
+        /* Hero Full Screen Stage */
+        .hero-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            margin-bottom: 40px;
-            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            background: rgba(249, 115, 22, 0.12);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: var(--accent-orange);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 100px;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         h1 {
-            font-size: 48px;
+            font-size: 64px;
             font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 20px;
-            letter-spacing: -0.5px;
+            line-height: 1.08;
+            letter-spacing: -1.5px;
+            margin-bottom: 24px;
         }
 
         h1 span {
-            background: linear-gradient(135deg, var(--primary-orange), var(--accent-gold));
+            background: linear-gradient(135deg, var(--accent-orange), #fbbf24);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p.desc {
+        p.hero-desc {
+            font-size: 20px;
             color: var(--text-sub);
-            font-size: 18px;
             line-height: 1.6;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
+            font-weight: 400;
         }
 
-        /* Modals */
+        /* Modals Glassmorphism */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 12, 18, 0.85);
-            backdrop-filter: blur(8px);
+            inset: 0;
+            background: rgba(7, 10, 16, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: fadeIn 0.2s ease-out;
+            animation: fadeIn 0.25s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .modal-card {
-            background: var(--card-bg);
+            background: rgba(18, 25, 40, 0.95);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 32px;
+            border-radius: 28px;
+            padding: 40px;
             width: 90%;
-            max-width: 520px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--orange-glow);
+            max-width: 560px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(16, 185, 129, 0.08);
         }
 
         .modal-card h2 {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             margin-bottom: 8px;
-            color: var(--text-main);
         }
 
         .modal-card p.sub {
             color: var(--text-sub);
-            font-size: 14px;
-            margin-bottom: 24px;
+            font-size: 15px;
+            margin-bottom: 28px;
         }
 
         /* Form Inputs */
         input[type="text"] {
             width: 100%;
-            padding: 14px 16px;
+            padding: 16px 20px;
             margin-bottom: 24px;
-            border-radius: 10px;
+            border-radius: 14px;
             border: 1px solid var(--card-border);
-            background: #121620;
+            background: rgba(11, 15, 25, 0.8);
             color: #fff;
             font-size: 16px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
 
         input[type="text"]:focus {
-            border-color: var(--primary-orange);
+            border-color: var(--primary-emerald);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
         }
 
         /* Order Table */
         .menu-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .menu-table th {
             text-align: left;
             padding: 12px 8px;
-            font-size: 13px;
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-sub);
+            letter-spacing: 1px;
+            color: var(--text-muted);
             border-bottom: 1px solid var(--card-border);
         }
 
         .menu-table td {
-            padding: 16px 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-weight: 500;
+            padding: 18px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-weight: 600;
+            font-size: 16px;
         }
 
         .limit-tag {
-            font-size: 12px;
-            color: var(--accent-gold);
-            background: rgba(245, 166, 35, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            background: rgba(249, 115, 22, 0.12);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .qty-controls {
@@ -227,78 +303,105 @@
         }
 
         .qty-btn {
-            background: #2a3142;
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
             border: 1px solid var(--card-border);
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.15s;
+            transition: all 0.15s;
         }
 
         .qty-btn:hover {
-            background: #3b4459;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Order Review Container */
-        .review-list {
-            background: #121620;
+        /* Order Review Styling */
+        .review-box {
+            background: rgba(11, 15, 25, 0.6);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 28px;
         }
 
         .review-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 16px;
         }
 
         .review-item:last-child {
             border-bottom: none;
         }
 
+        .review-item span {
+            color: var(--text-sub);
+        }
+
+        .review-item strong {
+            color: var(--primary-emerald);
+        }
+
         /* Success Card */
         .success-box {
             text-align: center;
-            padding: 20px 0;
+            padding: 10px 0;
         }
 
         .success-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
+            font-size: 56px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .app-container { padding: 20px; }
+            h1 { font-size: 40px; }
+            p.hero-desc { font-size: 16px; }
+            .modal-card { padding: 24px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <header>
-        <div class="logo">🎃 🍁 Autumn Feast</div>
-        <button class="btn" id="navOrderBtn" onclick="startOrder()">Order Now!</button>
-    </header>
+    <!-- Ambient Glow Effect -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
 
-    <!-- Main Hero Section -->
-    <div class="hero">
-        <h1>Halloween's Here,<br><span>So Is Our Feast!</span></h1>
-        <p class="desc">Halloween is here, and so is our grand feast! From the juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your meal with some nice old Mac and cheese, along with mashed potatoes and gravy. Dive into a spooktacular and cozy evening filled with delicious comfort foods crafted to make this holiday celebration unforgettable.</p>
-        <button class="btn" id="heroOrderBtn" onclick="startOrder()">Order Now!</button>
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <span>🎃 🍁 Autumn Feast</span>
+            </div>
+            <button class="btn" id="navOrderBtn" onclick="startOrder()">Order Now!</button>
+        </header>
+
+        <!-- Hero Main Stage -->
+        <main class="hero-stage">
+            <div class="badge">Seasonal Special</div>
+            <h1>Halloween's Here,<br><span>So Is Our Feast!</span></h1>
+            <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your chicken with warm macaroni and cheese, alongside creamy mashed potatoes and gravy. Dive into a cozy holiday celebration filled with iconic comfort flavors.</p>
+            <button class="btn" id="heroOrderBtn" onclick="startOrder()" style="padding: 18px 40px; font-size: 18px;">Order Now!</button>
+        </main>
     </div>
 
     <!-- Step 1: Name Prompt Modal -->
     <div class="modal-overlay" id="nameModal">
         <div class="modal-card">
             <h2>Welcome to the Feast! 🎉</h2>
-            <p class="sub">Please enter your name to start your order.</p>
-            <input type="text" id="userNameInput" placeholder="Enter your full name" autocomplete="off">
+            <p class="sub">Please enter your name to customize your order.</p>
+            <input type="text" id="userNameInput" placeholder="What is your name?" autocomplete="off">
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('nameModal')">Cancel</button>
                 <button class="btn" style="flex: 2;" onclick="saveName()">Continue to Menu</button>
@@ -306,12 +409,12 @@
         </div>
     </div>
 
-    <!-- Step 2: Order Items Modal -->
+    <!-- Step 2: Select Items Modal -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal-card">
             <h2 id="greetingHeader">Select Items</h2>
-            <p class="sub">Choose your delicious feast portion limits below.</p>
-            
+            <p class="sub">Customize your meal selection below.</p>
+
             <table class="menu-table">
                 <thead>
                     <tr>
@@ -373,10 +476,10 @@
     <!-- Step 3: Order Summary Modal -->
     <div class="modal-overlay" id="summaryModal">
         <div class="modal-card">
-            <h2>Review Your Order 📋</h2>
+            <h2>Order Summary 📋</h2>
             <p class="sub" id="customerNameReview"></p>
 
-            <div class="review-list" id="reviewItemsContainer"></div>
+            <div class="review-box" id="reviewItemsContainer"></div>
 
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="backToMenu()">Edit Items</button>
@@ -390,9 +493,9 @@
         <div class="modal-card">
             <div class="success-box">
                 <div class="success-icon">🍗</div>
-                <h2>Order Placed Successfully!</h2>
+                <h2>Order Confirmed!</h2>
                 <p class="sub" style="margin-top: 8px;">Thank you! Your order is locked in and being prepared. Enjoy your Autumn Feast!</p>
-                <button class="btn" style="width: 100%; margin-top: 16px;" onclick="closeModal('successModal')">Close</button>
+                <button class="btn" style="width: 100%; margin-top: 16px;" onclick="closeModal('successModal')">Done</button>
             </div>
         </div>
     </div>
@@ -417,7 +520,7 @@
 
         function startOrder() {
             if (hasPlacedOrder) {
-                alert("You have already placed your order! You can only submit one order per visit.");
+                alert("You have already placed your order! Only one order is allowed per visitor.");
                 return;
             }
             document.getElementById('nameModal').style.display = 'flex';
@@ -430,7 +533,7 @@
         function saveName() {
             const input = document.getElementById('userNameInput').value.trim();
             if (!input) {
-                alert("Please enter your name to continue!");
+                alert("Please enter your name to proceed!");
                 return;
             }
             customerName = input;
@@ -443,7 +546,7 @@
             let current = order[item] + change;
             if (current < 0) current = 0;
             if (current > max) {
-                alert(`Maximum allowed quantity for ${itemNames[item]} is ${max}.`);
+                alert(`Maximum quantity for ${itemNames[item]} is ${max}.`);
                 return;
             }
             order[item] = current;
@@ -453,12 +556,12 @@
         function openSummary() {
             const totalItems = Object.values(order).reduce((a, b) => a + b, 0);
             if (totalItems === 0) {
-                alert("Please select at least 1 item before proceeding!");
+                alert("Please select at least one dish before reviewing.");
                 return;
             }
 
             closeModal('orderModal');
-            document.getElementById('customerNameReview').innerText = `Order for: ${customerName}`;
+            document.getElementById('customerNameReview').innerText = `Customer: ${customerName}`;
             
             const container = document.getElementById('reviewItemsContainer');
             container.innerHTML = "";
@@ -485,7 +588,6 @@
             closeModal('summaryModal');
             document.getElementById('successModal').style.display = 'flex';
 
-            // Lock order buttons on the main screen
             const navBtn = document.getElementById('navOrderBtn');
             const heroBtn = document.getElementById('heroOrderBtn');
 
