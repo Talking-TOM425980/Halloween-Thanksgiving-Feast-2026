@@ -24,6 +24,7 @@
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --text-muted: #64748b;
+            --danger-red: #ef4444;
         }
 
         * {
@@ -122,6 +123,35 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Discrete Secret Admin Button */
+        .admin-secret-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            opacity: 0.35;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-secret-btn:hover {
+            opacity: 0.9;
+            color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
         /* Sleek Button Styles */
         .btn {
             background: linear-gradient(135deg, var(--primary-emerald), var(--primary-emerald-hover));
@@ -171,6 +201,16 @@
             color: var(--text-main);
             border-color: rgba(255, 255, 255, 0.2);
             transform: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.45);
         }
 
         /* Hero Stage */
@@ -252,7 +292,7 @@
             border-radius: 28px;
             padding: 36px 40px;
             width: 100%;
-            max-width: 520px;
+            max-width: 540px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
@@ -261,6 +301,10 @@
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             box-sizing: border-box;
             overflow: hidden;
+        }
+
+        .modal-card.wide {
+            max-width: 720px;
         }
 
         .modal-overlay.active .modal-card {
@@ -312,7 +356,7 @@
         }
 
         /* Input Elements */
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 16px 20px;
             border-radius: 14px;
@@ -324,7 +368,7 @@
             transition: all 0.2s ease;
         }
 
-        input[type="text"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus {
             border-color: var(--primary-emerald);
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
         }
@@ -439,6 +483,64 @@
             font-size: 16px;
         }
 
+        /* Admin Dashboard Order Card List */
+        .admin-orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .admin-order-card {
+            background: rgba(9, 13, 22, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .admin-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 8px;
+        }
+
+        .admin-order-header strong {
+            font-size: 17px;
+            color: var(--accent-gold);
+        }
+
+        .admin-order-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .admin-order-dishes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .dish-chip {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--primary-emerald);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
         /* Confirmation / Success Modal Elements */
         .success-box {
             text-align: center;
@@ -502,7 +604,11 @@
             <div class="logo">
                 <span class="logo-text">🎃 🍁 Autumn Feast</span>
             </div>
-            <button class="btn" id="navOrderBtn" onclick="startOrder()">Order Now!</button>
+            <div class="header-controls">
+                <!-- Discrete Secret Admin Button -->
+                <button class="admin-secret-btn" onclick="promptAdmin()" title="Admin Access">🔑</button>
+                <button class="btn" id="navOrderBtn" onclick="startOrder()">Order Now!</button>
+            </div>
         </header>
 
         <!-- Hero Stage -->
@@ -632,7 +738,7 @@
                     </div>
                     <div class="modal-header" style="margin-bottom: 8px;">
                         <h2>Order Confirmed!</h2>
-                        <p class="sub" style="margin-top: 8px;">Thank you! Your feast order has been locked in and is being prepared. Enjoy your autumn meal!</p>
+                        <p class="sub" style="margin-top: 8px;">Thank you! Your feast order has been locked in and saved. Enjoy your autumn meal!</p>
                     </div>
                 </div>
             </div>
@@ -642,10 +748,49 @@
         </div>
     </div>
 
+    <!-- Modal 5: Secret Admin Password Modal -->
+    <div class="modal-overlay" id="adminAuthModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Admin Login 🔒</h2>
+                <p class="sub">Enter security passcode to access saved orders.</p>
+            </div>
+            <div class="modal-body">
+                <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" autocomplete="off" onkeydown="if(event.key==='Enter') verifyAdminPass()">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('adminAuthModal')">Cancel</button>
+                <button class="btn" style="flex: 2;" onclick="verifyAdminPass()">Authenticate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Admin Dashboard -->
+    <div class="modal-overlay" id="adminDashboardModal">
+        <div class="modal-card wide">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>Orders Dashboard 👑</h2>
+                    <p class="sub" id="orderCountSub">Saved Customer Orders</p>
+                </div>
+                <button class="btn btn-danger" style="padding: 10px 18px; font-size: 13px;" onclick="clearAllOrders()">Clear All</button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-orders-list" id="adminOrdersContainer"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" style="width: 100%;" onclick="closeModal('adminDashboardModal')">Close Dashboard</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /* State Variables */
         let customerName = "";
         let hasPlacedOrder = false;
+
+        const ADMIN_PASS = "ADGH050213";
+        const STORAGE_KEY = "autumn_feast_saved_orders";
 
         const order = {
             chicken: 0,
@@ -737,9 +882,24 @@
             openModal('orderModal');
         }
 
-        /* Step 4: Place Order with Celebrations */
+        /* Step 4: Place Order & Save to LocalStorage */
         function placeOrder() {
             hasPlacedOrder = true;
+
+            // Prepare order object
+            const orderPayload = {
+                id: Date.now(),
+                customerName: customerName,
+                items: { ...order },
+                timestamp: new Date().toLocaleString('en-US', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                })
+            };
+
+            // Save to LocalStorage
+            saveOrderToStorage(orderPayload);
+
             closeModal('summaryModal');
             openModal('successModal');
 
@@ -761,6 +921,100 @@
             heroBtn.innerText = "Order Placed";
             navBtn.disabled = true;
             heroBtn.disabled = true;
+        }
+
+        /* LocalStorage Persistence Helpers */
+        function getStoredOrders() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.error("Failed to read orders from localStorage", e);
+                return [];
+            }
+        }
+
+        function saveOrderToStorage(newOrder) {
+            const currentOrders = getStoredOrders();
+            currentOrders.unshift(newOrder);
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(currentOrders));
+            } catch (e) {
+                console.error("Failed to save order to localStorage", e);
+            }
+        }
+
+        /* Admin Dashboard Actions */
+        function promptAdmin() {
+            document.getElementById('adminPasswordInput').value = "";
+            openModal('adminAuthModal');
+        }
+
+        function verifyAdminPass() {
+            const input = document.getElementById('adminPasswordInput').value;
+            if (input === ADMIN_PASS) {
+                closeModal('adminAuthModal');
+                renderAdminDashboard();
+                openModal('adminDashboardModal');
+            } else {
+                alert("Incorrect Password!");
+            }
+        }
+
+        function renderAdminDashboard() {
+            const orders = getStoredOrders();
+            const container = document.getElementById('adminOrdersContainer');
+            const sub = document.getElementById('orderCountSub');
+            container.innerHTML = "";
+
+            sub.innerText = `Total Saved Orders: ${orders.length}`;
+
+            if (orders.length === 0) {
+                container.innerHTML = `<div class="empty-state">No orders stored yet. Submitted orders will appear here!</div>`;
+                return;
+            }
+
+            orders.forEach((ord) => {
+                const card = document.createElement('div');
+                card.className = 'admin-order-card';
+
+                let chipsHtml = "";
+                for (const [key, qty] of Object.entries(ord.items || {})) {
+                    if (qty > 0) {
+                        chipsHtml += `<span class="dish-chip">${itemNames[key] || key}: x${qty}</span>`;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div class="admin-order-header">
+                        <strong>👤 ${escapeHtml(ord.customerName)}</strong>
+                        <span class="admin-order-time">🕒 ${ord.timestamp}</span>
+                    </div>
+                    <div class="admin-order-dishes">
+                        ${chipsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function clearAllOrders() {
+            if (confirm("Are you sure you want to clear all stored orders? This cannot be undone.")) {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                } catch (e) {
+                    console.error("Error clearing storage", e);
+                }
+                renderAdminDashboard();
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
         }
 
         /* Background Particle System (Glowing Embers & Floating Leaves) */
