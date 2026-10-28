@@ -3,311 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Autumn Feast 🎃 Cinematic 3D Edition</title>
+    <title>Autumn Feast | Ultra-Luxurious Culinary Experience</title>
+    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    
-    <!-- Include Three.js for Real 3D Graphics -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg-deep: #05070b;
-            --card-glass: rgba(15, 20, 32, 0.75);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --card-border-glow: rgba(255, 107, 0, 0.4);
-            --primary-emerald: #10b981;
+            --bg-dark: #080309;
+            --bg-deep-plum: #130616;
+            --glass-card: rgba(26, 12, 30, 0.75);
+            --glass-border: rgba(255, 180, 120, 0.15);
+            --glass-border-glow: rgba(255, 115, 0, 0.45);
+            
+            --harvest-gold: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.4);
+            --velvet-orange: #ff5500;
+            --orange-glow: rgba(255, 85, 0, 0.5);
+            --emerald-accent: #10b981;
             --emerald-glow: rgba(16, 185, 129, 0.35);
-            --accent-orange: #ff6b00;
-            --orange-glow: rgba(255, 107, 0, 0.45);
-            --gold-accent: #f59e0b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --font-display: 'Syne', sans-serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
+
+            --text-primary: #fffdfa;
+            --text-secondary: #cbd5e1;
+            --text-muted: #78716c;
+
+            --font-title: 'Cinzel', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--font-body);
+            font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            min-height: 100vh;
+        html, body {
             width: 100vw;
+            height: 100vh;
             overflow-x: hidden;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             position: relative;
         }
 
-        /* Three.js WebGL 3D Canvas Background */
-        #webglCanvas {
+        /* 60FPS Ambient Particle Canvas */
+        #particleCanvas {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100vw;
             height: 100vh;
             pointer-events: none;
             z-index: 0;
         }
 
-        /* App Container Layout */
-        .app-wrapper {
+        /* Ambient Radial Lighting */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.65;
+            animation: orbFloat 14s infinite alternate ease-in-out;
+        }
+
+        .orb-plum {
+            top: -10vw;
+            left: -10vw;
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle, rgba(100, 15, 80, 0.4) 0%, transparent 70%);
+        }
+
+        .orb-amber {
+            bottom: -15vw;
+            right: -10vw;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, var(--orange-glow) 0%, transparent 70%);
+            animation-delay: -7s;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        /* App Shell */
+        .app-container {
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            max-width: 1400px;
+            max-width: 1480px;
             margin: 0 auto;
-            padding: 24px 32px;
+            padding: 28px 48px;
         }
 
-        /* Navigation Header */
+        /* Header Navigation */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 28px;
-            background: var(--card-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            margin-bottom: 40px;
+            padding: 20px 32px;
+            background: var(--glass-card);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-family: var(--font-display);
-            font-size: 22px;
+            gap: 14px;
+            font-family: var(--font-title);
+            font-size: 24px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-logo span {
-            background: linear-gradient(135deg, var(--accent-orange), var(--gold-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .device-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 100px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .device-badge::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--primary-emerald);
-            box-shadow: 0 0 8px var(--primary-emerald);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Buttons */
-        .btn {
-            background: linear-gradient(135deg, var(--accent-orange), #e05300);
-            border: none;
-            color: #ffffff;
-            padding: 14px 28px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 14px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px var(--orange-glow);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 28px var(--orange-glow);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            box-shadow: none;
-            padding: 14px 20px;
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn:disabled {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-muted);
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* Hero Main Stage */
-        .hero-stage {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 48px;
-            align-items: center;
-            flex: 1;
-            margin-bottom: 40px;
-        }
-
-        .hero-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .pill-tag {
-            background: rgba(255, 107, 0, 0.12);
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            color: var(--accent-orange);
-            font-size: 12px;
-            font-weight: 800;
-            padding: 6px 16px;
-            border-radius: 100px;
-            margin-bottom: 24px;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        h1 {
-            font-family: var(--font-display);
-            font-size: 68px;
-            font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -1.5px;
-            margin-bottom: 24px;
-        }
-
-        h1 span {
-            background: linear-gradient(135deg, var(--accent-orange), var(--gold-accent));
+        .brand-logo span {
+            background: linear-gradient(135deg, #fff 20%, var(--harvest-gold) 60%, var(--velvet-orange) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p.hero-desc {
+        .header-actions {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        /* Action Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--velvet-orange), #d93800);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 16px 32px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px var(--orange-glow);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            user-select: none;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 36px var(--orange-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            box-shadow: none;
+            padding: 16px 24px;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border-color: rgba(255, 180, 120, 0.3);
+            transform: none;
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: var(--text-muted) !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            border-color: var(--glass-border) !important;
+            transform: none !important;
+        }
+
+        /* Split-Stage Stage */
+        .hero-stage {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+            flex: 1;
+            padding: 40px 0;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--harvest-gold);
+            font-size: 13px;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 100px;
+            margin-bottom: 24px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        h1.hero-title {
+            font-family: var(--font-title);
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        h1.hero-title span.gradient-text {
+            background: linear-gradient(135deg, var(--velvet-orange), var(--harvest-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.hero-description {
             font-size: 19px;
             color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 36px;
-            font-weight: 400;
-            max-width: 580px;
+            line-height: 1.65;
+            margin-bottom: 40px;
+            max-width: 600px;
         }
 
-        /* Showcase Grid */
-        .showcase-stage {
+        /* Photorealistic 3D Interactive Cards Grid */
+        .culinary-showcase {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 24px;
+            perspective: 1000px;
         }
 
-        .dish-card-3d {
-            background: var(--card-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
+        .dish-card-lux {
+            background: var(--glass-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 190px;
-            transition: all 0.3s ease;
+            min-height: 220px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            overflow: hidden;
         }
 
-        .dish-card-3d:hover {
-            border-color: var(--card-border-glow);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 107, 0, 0.15);
-            transform: translateY(-4px);
+        .dish-card-lux::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 115, 0, 0.15) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
         }
 
-        .dish-emoji {
-            font-size: 38px;
-            margin-bottom: 12px;
-            display: inline-block;
+        .dish-card-lux:hover {
+            border-color: var(--glass-border-glow);
+            box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 85, 0, 0.25);
+            transform: translateY(-6px) rotateX(4deg) rotateY(-4deg);
         }
 
-        .dish-title {
-            font-size: 18px;
-            font-weight: 700;
+        .dish-card-lux:hover::before {
+            opacity: 1;
+        }
+
+        .svg-dish-container {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: inset 0 2px 10px rgba(255,255,255,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .dish-card-lux:hover .svg-dish-container {
+            transform: scale(1.1) translateZ(15px);
+        }
+
+        .dish-card-title {
+            font-size: 20px;
+            font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 4px;
         }
 
-        .dish-limit {
-            font-size: 12px;
-            color: var(--gold-accent);
-            font-weight: 600;
+        .dish-card-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 12px;
         }
 
-        /* Modals */
+        .portion-pill {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--harvest-gold);
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            padding: 4px 10px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Glass Modal Overlays */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 7, 12, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(3, 2, 5, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            padding: 20px;
+            padding: 24px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
         }
 
         .modal-card {
-            background: rgba(16, 21, 33, 0.95);
-            border: 1px solid var(--card-border);
-            border-radius: 32px;
+            background: rgba(20, 10, 24, 0.96);
+            border: 1px solid var(--glass-border);
+            border-radius: 36px;
             padding: 40px;
             width: 100%;
-            max-width: 560px;
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8);
+            max-width: 580px;
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(255, 85, 0, 0.15);
+            transform: scale(0.94);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 90vh;
             overflow-y: auto;
         }
 
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
         .modal-card h2 {
-            font-family: var(--font-display);
+            font-family: var(--font-title);
             font-size: 32px;
             font-weight: 800;
-            letter-spacing: -0.5px;
             margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .modal-card p.sub {
@@ -316,13 +389,14 @@
             margin-bottom: 28px;
         }
 
+        /* Glass Form Control */
         input[type="text"], input[type="password"] {
             width: 100%;
             padding: 18px 22px;
-            margin-bottom: 24px;
-            border-radius: 16px;
-            border: 1px solid var(--card-border);
-            background: rgba(8, 11, 18, 0.8);
+            margin-bottom: 28px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            background: rgba(8, 3, 10, 0.8);
             color: #fff;
             font-size: 16px;
             outline: none;
@@ -330,10 +404,11 @@
         }
 
         input[type="text"]:focus, input[type="password"]:focus {
-            border-color: var(--accent-orange);
-            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
+            border-color: var(--velvet-orange);
+            box-shadow: 0 0 0 4px rgba(255, 85, 0, 0.2);
         }
 
+        /* Menu Selection Table */
         .menu-table {
             width: 100%;
             border-collapse: collapse;
@@ -342,16 +417,16 @@
 
         .menu-table th {
             text-align: left;
-            padding: 12px 8px;
+            padding: 14px 10px;
             font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             color: var(--text-muted);
-            border-bottom: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .menu-table td {
-            padding: 18px 8px;
+            padding: 18px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             font-weight: 600;
             font-size: 16px;
@@ -367,12 +442,12 @@
         .qty-btn {
             background: rgba(255, 255, 255, 0.06);
             color: var(--text-primary);
-            border: 1px solid var(--card-border);
+            border: 1px solid var(--glass-border);
             width: 38px;
             height: 38px;
             border-radius: 12px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -382,19 +457,20 @@
 
         .qty-btn:hover {
             background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .review-box {
-            background: rgba(8, 11, 18, 0.6);
-            border: 1px solid var(--card-border);
+            background: rgba(8, 3, 10, 0.7);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
-            padding: 20px;
+            padding: 20px 24px;
             margin-bottom: 28px;
             max-height: 260px;
             overflow-y: auto;
         }
 
-        .review-item {
+        .review-row {
             display: flex;
             justify-content: space-between;
             padding: 12px 0;
@@ -402,115 +478,161 @@
             font-size: 16px;
         }
 
-        .review-item:last-child {
+        .review-row:last-child {
             border-bottom: none;
         }
 
-        #confettiCanvas {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 2000;
-        }
-
-        /* MOBILE RESPONSIVE ADAPTATIONS */
-        body.is-mobile .app-wrapper { padding: 16px; }
-        body.is-mobile header { padding: 14px 18px; border-radius: 18px; margin-bottom: 24px; }
-        body.is-mobile .brand-logo { font-size: 18px; }
-        body.is-mobile .hero-stage { grid-template-columns: 1fr; gap: 32px; text-align: center; }
-        body.is-mobile .hero-text { align-items: center; }
-        body.is-mobile h1 { font-size: 40px; letter-spacing: -1px; margin-bottom: 16px; }
-        body.is-mobile p.hero-desc { font-size: 16px; margin-bottom: 28px; }
-        body.is-mobile .showcase-stage { grid-template-columns: 1fr; gap: 14px; }
-        body.is-mobile .dish-card-3d { min-height: auto; padding: 16px; flex-direction: row; align-items: center; }
-        body.is-mobile .dish-emoji { font-size: 30px; margin-bottom: 0; margin-right: 16px; }
-        body.is-mobile .dish-info { text-align: left; flex: 1; }
-        body.is-mobile .modal-card { padding: 24px 20px; border-radius: 28px; }
-        body.is-mobile .btn { width: 100%; padding: 16px 20px; font-size: 16px; }
-        body.is-mobile .modal-actions { flex-direction: column-reverse; gap: 10px !important; }
+        /* Device Responsive Override */
+        body.is-mobile .app-container { padding: 18px; }
+        body.is-mobile header { padding: 16px 20px; border-radius: 20px; }
+        body.is-mobile .hero-stage { grid-template-columns: 1fr; gap: 36px; text-align: center; }
+        body.is-mobile h1.hero-title { font-size: 42px; }
+        body.is-mobile p.hero-description { font-size: 16px; margin: 0 auto 28px auto; }
+        body.is-mobile .culinary-showcase { grid-template-columns: 1fr; gap: 16px; }
+        body.is-mobile .dish-card-lux { min-height: auto; padding: 18px; flex-direction: row; align-items: center; }
+        body.is-mobile .svg-dish-container { margin-bottom: 0; margin-right: 16px; width: 60px; height: 60px; flex-shrink: 0; }
+        body.is-mobile .modal-card { padding: 28px 20px; border-radius: 28px; }
+        body.is-mobile .modal-footer { flex-direction: column-reverse; gap: 10px; }
+        body.is-mobile .btn { width: 100%; }
     </style>
 </head>
 <body>
 
-    <!-- WebGL 3D Graphics Canvas -->
-    <canvas id="webglCanvas"></canvas>
-    <canvas id="confettiCanvas"></canvas>
+    <!-- Particle Dynamics Canvas -->
+    <canvas id="particleCanvas"></canvas>
 
-    <div class="app-wrapper">
-        <!-- Header -->
+    <!-- Ambient Orbs -->
+    <div class="ambient-orb orb-plum"></div>
+    <div class="ambient-orb orb-amber"></div>
+
+    <div class="app-container">
+        <!-- Header Nav -->
         <header>
             <div class="brand-logo">
-                <span>🎃 Autumn Feast</span>
-                <div class="device-badge" id="deviceDisplayTag">3D Desktop Mode</div>
+                <span>🍁 Autumn Feast</span>
             </div>
-            <div class="header-controls">
+            <div class="header-actions">
                 <button class="btn btn-secondary" onclick="openAdminPrompt()">Admin</button>
-                <button class="btn" id="navOrderBtn" onclick="startOrder()">Order Now ✨</button>
+                <button class="btn" id="navOrderBtn" onclick="initiateOrder()">Order Now ✨</button>
             </div>
         </header>
 
         <!-- Hero Stage -->
         <main class="hero-stage">
-            <div class="hero-text">
-                <div class="pill-tag">🍁 Seasonal 3D Experience</div>
-                <h1>Autumn's Here,<br><span>So Is Our Feast!</span></h1>
-                <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your chicken with warm macaroni and cheese, alongside creamy mashed potatoes and gravy. Dive into a cozy holiday celebration crafted for family and friends.</p>
-                <button class="btn" id="heroOrderBtn" onclick="startOrder()" style="padding: 18px 40px; font-size: 18px;">Place Your Order ✨</button>
+            <div>
+                <div class="hero-badge">✨ Seasonal Special</div>
+                <h1 class="hero-title">Halloween's Here,<br><span class="gradient-text">So Is Our Feast!</span></h1>
+                <p class="hero-description">From juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your chicken with warm macaroni and cheese, alongside creamy mashed potatoes and gravy. Dive into a cozy holiday celebration crafted for family and friends.</p>
+                <button class="btn" id="heroOrderBtn" onclick="initiateOrder()" style="padding: 18px 44px; font-size: 18px;">Place Your Order ✨</button>
             </div>
 
-            <!-- Showcase Cards -->
-            <div class="showcase-stage">
-                <div class="dish-card-3d">
-                    <div class="dish-emoji">🍗</div>
-                    <div class="dish-info">
-                        <div class="dish-title">Rotisserie Chicken</div>
-                        <div class="dish-limit">Unlimited Portions</div>
+            <!-- Photorealistic SVG Culinary Cards -->
+            <div class="culinary-showcase">
+                <!-- Rotisserie Chicken -->
+                <div class="dish-card-lux">
+                    <div class="svg-dish-container">
+                        <svg width="40" height="40" viewBox="0 0 64 64" fill="none">
+                            <path d="M12 40C12 28 22 18 36 18C48 18 54 26 54 36C54 44 44 48 34 48C22 48 12 46 12 40Z" fill="url(#chickenGrad)"/>
+                            <path d="M18 42C24 44 34 45 42 43" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="chickenGrad" x1="12" y1="18" x2="54" y2="48" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#ff7700"/>
+                                    <stop offset="1" stop-color="#b33600"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="dish-card-title">Rotisserie Chicken</div>
+                        <div class="dish-card-subtitle">Juicy, golden oven-roasted chicken</div>
+                        <span class="portion-pill">Unlimited Portions</span>
                     </div>
                 </div>
-                <div class="dish-card-3d">
-                    <div class="dish-emoji">🧀</div>
-                    <div class="dish-info">
-                        <div class="dish-title">Mac & Cheese</div>
-                        <div class="dish-limit">Max 2 Portions</div>
+
+                <!-- Mac and Cheese -->
+                <div class="dish-card-lux">
+                    <div class="svg-dish-container">
+                        <svg width="40" height="40" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="34" r="20" fill="url(#macGrad)"/>
+                            <path d="M22 28C26 24 38 24 42 28" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                            <defs>
+                                <linearGradient id="macGrad" x1="12" y1="14" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#f59e0b"/>
+                                    <stop offset="1" stop-color="#d97706"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="dish-card-title">Mac & Cheese</div>
+                        <div class="dish-card-subtitle">Rich & creamy baked classic mac</div>
+                        <span class="portion-pill">Max 2 Portions</span>
                     </div>
                 </div>
-                <div class="dish-card-3d">
-                    <div class="dish-emoji">🥔</div>
-                    <div class="dish-info">
-                        <div class="dish-title">Mashed Potatoes</div>
-                        <div class="dish-limit">Max 2 Portions</div>
+
+                <!-- Mashed Potatoes -->
+                <div class="dish-card-lux">
+                    <div class="svg-dish-container">
+                        <svg width="40" height="40" viewBox="0 0 64 64" fill="none">
+                            <ellipse cx="32" cy="36" rx="22" ry="14" fill="url(#potatoGrad)"/>
+                            <path d="M26 32C30 30 36 34 40 31" stroke="#b33600" stroke-width="3" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="potatoGrad" x1="10" y1="22" x2="54" y2="50" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#fef3c7"/>
+                                    <stop offset="1" stop-color="#fde68a"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="dish-card-title">Mashed Potatoes</div>
+                        <div class="dish-card-subtitle">Smooth mashed potatoes with gravy</div>
+                        <span class="portion-pill">Max 2 Portions</span>
                     </div>
                 </div>
-                <div class="dish-card-3d">
-                    <div class="dish-emoji">🥤</div>
-                    <div class="dish-info">
-                        <div class="dish-title">Cold Fanta</div>
-                        <div class="dish-limit">Max 2 Portions</div>
+
+                <!-- Cold Fanta -->
+                <div class="dish-card-lux">
+                    <div class="svg-dish-container">
+                        <svg width="40" height="40" viewBox="0 0 64 64" fill="none">
+                            <rect x="22" y="16" width="20" height="36" rx="6" fill="url(#fantaGrad)"/>
+                            <path d="M26 12H38" stroke="#ff7700" stroke-width="4" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="fantaGrad" x1="22" y1="16" x2="42" y2="52" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#ff5500"/>
+                                    <stop offset="1" stop-color="#cc2200"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="dish-card-title">Cold Fanta</div>
+                        <div class="dish-card-subtitle">Ice-cold refreshing orange beverage</div>
+                        <span class="portion-pill">Max 2 Portions</span>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Step 1: Name Prompt Modal -->
+    <!-- Step 1: Name Modal -->
     <div class="modal-overlay" id="nameModal">
         <div class="modal-card">
-            <h2>Welcome! 🎉</h2>
-            <p class="sub">Please enter your full name to start your order session.</p>
-            <input type="text" id="userNameInput" placeholder="Enter your name..." autocomplete="off">
-            <div class="modal-actions" style="display: flex; gap: 12px;">
+            <h2>Welcome to the Feast! 🎉</h2>
+            <p class="sub">Please enter your name to customize your order session.</p>
+            <input type="text" id="userNameInput" placeholder="Enter your full name" autocomplete="off" onkeydown="if(event.key==='Enter') saveName()">
+            <div class="modal-footer" style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('nameModal')">Cancel</button>
                 <button class="btn" style="flex: 2;" onclick="saveName()">Continue to Menu</button>
             </div>
         </div>
     </div>
 
-    <!-- Step 2: Select Items Modal -->
+    <!-- Step 2: Order Modal -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal-card">
-            <h2 id="greetingHeader">Select Dishes</h2>
-            <p class="sub">Choose your items according to session portion limits.</p>
-
+            <h2 id="greetingTitle">Select Items</h2>
+            <p class="sub">Choose your portions below.</p>
             <table class="menu-table">
                 <thead>
                     <tr>
@@ -523,336 +645,191 @@
                         <td>Rotisserie Chicken</td>
                         <td>
                             <div class="qty-controls">
-                                <button class="qty-btn" onclick="changeQty('chicken', -1)">-</button>
+                                <button class="qty-btn" onclick="updateQty('chicken', -1)">-</button>
                                 <span id="qty-chicken">0</span>
-                                <button class="qty-btn" onclick="changeQty('chicken', 1)">+</button>
+                                <button class="qty-btn" onclick="updateQty('chicken', 1)">+</button>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Mac and Cheese <span style="font-size: 11px; color: var(--gold-accent); display: block;">max 2</span></td>
+                        <td>Mac & Cheese <span style="font-size: 11px; color: var(--harvest-gold); display: block;">max 2</span></td>
                         <td>
                             <div class="qty-controls">
-                                <button class="qty-btn" onclick="changeQty('mac', -1)">-</button>
+                                <button class="qty-btn" onclick="updateQty('mac', -1)">-</button>
                                 <span id="qty-mac">0</span>
-                                <button class="qty-btn" onclick="changeQty('mac', 1, 2)">+</button>
+                                <button class="qty-btn" onclick="updateQty('mac', 1, 2)">+</button>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Mashed Potatoes <span style="font-size: 11px; color: var(--gold-accent); display: block;">max 2</span></td>
+                        <td>Mashed Potatoes <span style="font-size: 11px; color: var(--harvest-gold); display: block;">max 2</span></td>
                         <td>
                             <div class="qty-controls">
-                                <button class="qty-btn" onclick="changeQty('potatoes', -1)">-</button>
+                                <button class="qty-btn" onclick="updateQty('potatoes', -1)">-</button>
                                 <span id="qty-potatoes">0</span>
-                                <button class="qty-btn" onclick="changeQty('potatoes', 1, 2)">+</button>
+                                <button class="qty-btn" onclick="updateQty('potatoes', 1, 2)">+</button>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Cold Fanta <span style="font-size: 11px; color: var(--gold-accent); display: block;">max 2</span></td>
+                        <td>Cold Fanta <span style="font-size: 11px; color: var(--harvest-gold); display: block;">max 2</span></td>
                         <td>
                             <div class="qty-controls">
-                                <button class="qty-btn" onclick="changeQty('fanta', -1)">-</button>
+                                <button class="qty-btn" onclick="updateQty('fanta', -1)">-</button>
                                 <span id="qty-fanta">0</span>
-                                <button class="qty-btn" onclick="changeQty('fanta', 1, 2)">+</button>
+                                <button class="qty-btn" onclick="updateQty('fanta', 1, 2)">+</button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
-
-            <div class="modal-actions" style="display: flex; gap: 12px;">
+            <div class="modal-footer" style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('orderModal')">Back</button>
                 <button class="btn" style="flex: 2;" onclick="openSummary()">Review Order</button>
             </div>
         </div>
     </div>
 
-    <!-- Step 3: Order Summary Modal -->
+    <!-- Step 3: Summary Modal -->
     <div class="modal-overlay" id="summaryModal">
         <div class="modal-card">
-            <h2>Order Summary 📋</h2>
-            <p class="sub" id="customerNameReview"></p>
-
+            <h2>Review Order 📋</h2>
+            <p class="sub" id="customerReviewName"></p>
             <div class="review-box" id="reviewItemsContainer"></div>
-
-            <div class="modal-actions" style="display: flex; gap: 12px;">
-                <button class="btn btn-secondary" style="flex: 1;" onclick="backToMenu()">Edit Items</button>
-                <button class="btn" id="placeOrderBtn" style="flex: 2;" onclick="placeOrder()">Place Order ✨</button>
+            <div class="modal-footer" style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="editOrder()">Edit Items</button>
+                <button class="btn" id="placeOrderBtn" style="flex: 2;" onclick="submitOrder()">Place Order ✨</button>
             </div>
         </div>
     </div>
 
-    <!-- Step 4: Success Confirmation Modal -->
+    <!-- Step 4: Success Modal -->
     <div class="modal-overlay" id="successModal">
         <div class="modal-card" style="text-align: center;">
             <div style="font-size: 64px; margin-bottom: 16px;">🍗</div>
             <h2>Order Locked In!</h2>
-            <p class="sub" style="margin-top: 8px;">Thank you! Your order has been submitted and is being prepared for the Autumn Feast.</p>
+            <p class="sub" style="margin-top: 8px;">Thank you! Your order has been submitted and is being prepared.</p>
             <button class="btn" style="width: 100%; margin-top: 16px;" onclick="closeModal('successModal')">Close</button>
         </div>
     </div>
 
-    <!-- Admin Authentication Modal -->
+    <!-- Admin Password Modal -->
     <div class="modal-overlay" id="adminAuthModal">
         <div class="modal-card">
-            <h2>Secret Admin Access 🔒</h2>
-            <p class="sub">Enter the passcode to unlock the order logs.</p>
-            <input type="password" id="adminPassInput" placeholder="Enter password">
-            <div class="modal-actions" style="display: flex; gap: 12px;">
+            <h2>Admin Security 🔒</h2>
+            <p class="sub">Enter security key to view saved order records.</p>
+            <input type="password" id="adminPassInput" placeholder="Enter security key" autocomplete="off" onkeydown="if(event.key==='Enter') verifyAdminPass()">
+            <div class="modal-footer" style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('adminAuthModal')">Cancel</button>
-                <button class="btn" style="flex: 2;" onclick="checkAdminPass()">Login</button>
+                <button class="btn" style="flex: 2;" onclick="verifyAdminPass()">Login</button>
             </div>
         </div>
     </div>
 
     <!-- Admin Dashboard Modal -->
     <div class="modal-overlay" id="adminDashboardModal">
-        <div class="modal-card" style="max-width: 600px;">
+        <div class="modal-card" style="max-width: 650px;">
             <h2>Admin Dashboard 📊</h2>
             <p class="sub">Local Order Logs:</p>
-            <div class="review-box" id="adminOrdersList"></div>
-            <div class="modal-actions" style="display: flex; gap: 12px;">
-                <button class="btn btn-secondary" style="flex: 1;" onclick="clearAllOrders()">Clear Local Orders</button>
+            <div class="review-box" id="adminLogContainer"></div>
+            <div class="modal-footer" style="display: flex; gap: 12px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="clearAdminLogs()">Clear Local Orders</button>
                 <button class="btn" style="flex: 1;" onclick="closeModal('adminDashboardModal')">Close</button>
             </div>
         </div>
     </div>
 
     <script>
-        /* -------------------------------------------------------------------------- */
-        /*  1. DEVICE DETECTION & ADAPTIVE ARCHITECTURE                               */
-        /* -------------------------------------------------------------------------- */
-        const DeviceEngine = {
-            isMobile: false,
-            init() {
-                this.checkDevice();
-                window.addEventListener('resize', () => this.checkDevice());
-            },
-            checkDevice() {
-                this.isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
-                const tag = document.getElementById('deviceDisplayTag');
-                if (this.isMobile) {
-                    document.body.classList.add('is-mobile');
-                    if (tag) tag.innerText = '📱 3D Mobile View';
-                } else {
-                    document.body.classList.remove('is-mobile');
-                    if (tag) tag.innerText = '🖥️ 3D Desktop View';
-                }
-            }
-        };
-        DeviceEngine.init();
-
-        /* -------------------------------------------------------------------------- */
-        /*  2. THREE.JS REAL 3D GRAPHICS SCENE ENGINE                                 */
-        /* -------------------------------------------------------------------------- */
-        let scene, camera, renderer, pumpkinGroup, particlesMesh;
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-
-        function init3DScene() {
-            const canvas = document.getElementById('webglCanvas');
-            scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x05070b, 0.015);
-
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 18;
-
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            const pointLight1 = new THREE.PointLight(0xff6b00, 3, 50);
-            pointLight1.position.set(10, 10, 10);
-            scene.add(pointLight1);
-
-            const pointLight2 = new THREE.PointLight(0x10b981, 2, 50);
-            pointLight2.position.set(-10, -10, 10);
-            scene.add(pointLight2);
-
-            // Create 3D Stylized Pumpkin Mesh Group
-            pumpkinGroup = new THREE.Group();
-            
-            // Pumpkin Body (Flattened Sphere with Orange Material)
-            const bodyGeo = new THREE.SphereGeometry(3.2, 32, 16);
-            bodyGeo.scale(1, 0.82, 1);
-            const bodyMat = new THREE.MeshStandardMaterial({
-                color: 0xff6b00,
-                roughness: 0.35,
-                metalness: 0.1,
-                emissive: 0x331100
-            });
-            const pumpkinBody = new THREE.Mesh(bodyGeo, bodyMat);
-            pumpkinGroup.add(pumpkinBody);
-
-            // Pumpkin Stem
-            const stemGeo = new THREE.CylinderGeometry(0.3, 0.5, 1.2, 12);
-            const stemMat = new THREE.MeshStandardMaterial({ color: 0x2e6f40, roughness: 0.6 });
-            const stem = new THREE.Mesh(stemGeo, stemMat);
-            stem.position.y = 2.8;
-            stem.rotation.z = 0.2;
-            pumpkinGroup.add(stem);
-
-            // Position pumpkin off-center for visual balance on desktop, centered on mobile
-            pumpkinGroup.position.set(DeviceEngine.isMobile ? 0 : 5, DeviceEngine.isMobile ? -3 : -1, 0);
-            scene.add(pumpkinGroup);
-
-            // Floating Autumn Particles / Embers Field
-            const particlesCount = DeviceEngine.isMobile ? 120 : 350;
-            const particlesGeo = new THREE.BufferGeometry();
-            const positions = new Float32Array(particlesCount * 3);
-
-            for (let i = 0; i < particlesCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 40;
-                positions[i + 1] = (Math.random() - 0.5) * 40;
-                positions[i + 2] = (Math.random() - 0.5) * 30;
-            }
-
-            particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const particlesMat = new THREE.PointsMaterial({
-                size: 0.18,
-                color: 0xffaa44,
-                transparent: true,
-                opacity: 0.7,
-                blending: THREE.AdditiveBlending
-            });
-
-            particlesMesh = new THREE.Points(particlesGeo, particlesMat);
-            scene.add(particlesMesh);
-
-            // Mouse / Touch Listener
-            window.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX - window.innerWidth / 2) * 0.002;
-                mouseY = (e.clientY - window.innerHeight / 2) * 0.002;
-            });
-
-            window.addEventListener('touchmove', (e) => {
-                if (e.touches.length > 0) {
-                    mouseX = (e.touches[0].clientX - window.innerWidth / 2) * 0.003;
-                    mouseY = (e.touches[0].clientY - window.innerHeight / 2) * 0.003;
-                }
-            }, { passive: true });
-
-            window.addEventListener('resize', onWindowResize);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate3D() {
-            requestAnimationFrame(animate3D);
-
-            // Smooth parallax rotation
-            targetX += (mouseX - targetX) * 0.05;
-            targetY += (mouseY - targetY) * 0.05;
-
-            if (pumpkinGroup) {
-                pumpkinGroup.rotation.y += 0.005 + targetX;
-                pumpkinGroup.rotation.x = targetY * 0.5;
-                pumpkinGroup.position.y = (DeviceEngine.isMobile ? -3 : -1) + Math.sin(Date.now() * 0.002) * 0.3;
-            }
-
-            if (particlesMesh) {
-                particlesMesh.rotation.y -= 0.0008;
-                const posArr = particlesMesh.geometry.attributes.position.array;
-                for (let i = 1; i < posArr.length; i += 3) {
-                    posArr[i] += 0.02; // Float upwards
-                    if (posArr[i] > 20) posArr[i] = -20;
-                }
-                particlesMesh.geometry.attributes.position.needsUpdate = true;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        init3DScene();
-        animate3D();
-
-        /* -------------------------------------------------------------------------- */
-        /*  3. ORDERING & BACKEND SYSTEM LOGIC                                        */
-        /* -------------------------------------------------------------------------- */
+        /* State Variables */
         let customerName = "";
         let hasPlacedOrder = false;
 
-        const order = { chicken: 0, mac: 0, potatoes: 0, fanta: 0 };
-        const itemNames = {
+        const ADMIN_PASSWORD = "ADGH050213";
+        const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqppqorj";
+        const STORAGE_KEY = "autumn_feast_orders";
+
+        const orderState = { chicken: 0, mac: 0, potatoes: 0, fanta: 0 };
+        const itemCatalog = {
             chicken: "Rotisserie Chicken",
-            mac: "Mac and Cheese",
+            mac: "Macaroni & Cheese",
             potatoes: "Mashed Potatoes",
             fanta: "Cold Fanta"
         };
 
-        function startOrder() {
+        /* Device Detection Engine */
+        function checkDevice() {
+            if (window.innerWidth <= 768 || ('ontouchstart' in window)) {
+                document.body.classList.add('is-mobile');
+            } else {
+                document.body.classList.remove('is-mobile');
+            }
+        }
+        window.addEventListener('resize', checkDevice);
+        checkDevice();
+
+        /* Modal Helpers */
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function initiateOrder() {
             if (hasPlacedOrder) {
-                alert("You have already placed an order for this session.");
+                alert("You have already submitted an order for this session.");
                 return;
             }
-            document.getElementById('nameModal').style.display = 'flex';
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
+            openModal('nameModal');
         }
 
         function saveName() {
-            const input = document.getElementById('userNameInput').value.trim();
-            if (!input) {
+            const val = document.getElementById('userNameInput').value.trim();
+            if (!val) {
                 alert("Please enter your name!");
                 return;
             }
-            customerName = input;
+            customerName = val;
             closeModal('nameModal');
-            document.getElementById('greetingHeader').innerText = `Welcome, ${customerName}!`;
-            document.getElementById('orderModal').style.display = 'flex';
+            document.getElementById('greetingTitle').innerText = `Welcome, ${customerName}!`;
+            openModal('orderModal');
         }
 
-        function changeQty(item, change, max = Infinity) {
-            let current = order[item] + change;
-            if (current < 0) current = 0;
-            if (current > max) {
-                alert(`Maximum quantity for ${itemNames[item]} is ${max}.`);
+        function updateQty(item, delta, max = Infinity) {
+            let curr = orderState[item] + delta;
+            if (curr < 0) curr = 0;
+            if (curr > max) {
+                alert(`Maximum portion limit for ${itemCatalog[item]} is ${max}.`);
                 return;
             }
-            order[item] = current;
-            document.getElementById(`qty-${item}`).innerText = current;
+            orderState[item] = curr;
+            document.getElementById(`qty-${item}`).innerText = curr;
         }
 
         function openSummary() {
-            const total = Object.values(order).reduce((a, b) => a + b, 0);
+            const total = Object.values(orderState).reduce((a, b) => a + b, 0);
             if (total === 0) {
-                alert("Please select at least 1 item!");
+                alert("Please select at least 1 item.");
                 return;
             }
             closeModal('orderModal');
-            document.getElementById('customerNameReview').innerText = `Customer: ${customerName}`;
+            document.getElementById('customerReviewName').innerText = `Customer: ${customerName}`;
             const container = document.getElementById('reviewItemsContainer');
             container.innerHTML = "";
 
-            for (const [key, qty] of Object.entries(order)) {
+            for (const [key, qty] of Object.entries(orderState)) {
                 if (qty > 0) {
                     const row = document.createElement('div');
-                    row.className = 'review-item';
-                    row.innerHTML = `<span>${itemNames[key]}</span> <strong>x${qty}</strong>`;
+                    row.className = 'review-row';
+                    row.innerHTML = `<span>${itemCatalog[key]}</span> <strong>x${qty}</strong>`;
                     container.appendChild(row);
                 }
             }
-            document.getElementById('summaryModal').style.display = 'flex';
+            openModal('summaryModal');
         }
 
-        function backToMenu() {
+        function editOrder() {
             closeModal('summaryModal');
-            document.getElementById('orderModal').style.display = 'flex';
+            openModal('orderModal');
         }
 
-        async function placeOrder() {
+        async function submitOrder() {
             const btn = document.getElementById('placeOrderBtn');
             btn.innerText = "Submitting...";
             btn.disabled = true;
@@ -860,27 +837,27 @@
             const record = {
                 id: Date.now(),
                 name: customerName,
-                date: new Date().toLocaleString(),
-                items: { ...order }
+                time: new Date().toLocaleString(),
+                items: { ...orderState }
             };
 
-            // Save Local Backup
-            let localOrders = JSON.parse(localStorage.getItem('autumn_feast_orders') || '[]');
-            localOrders.push(record);
-            localStorage.setItem('autumn_feast_orders', JSON.stringify(localOrders));
+            // Local Persistence
+            let logs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            logs.unshift(record);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
 
-            // Remote Sync via Formspree
+            // Formspree Integration
             try {
-                await fetch("https://formspree.io/f/xqppqorj", {
+                await fetch(FORMSPREE_ENDPOINT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
                         customerName: customerName,
-                        rotisserieChicken: order.chicken,
-                        macAndCheese: order.mac,
-                        mashedPotatoes: order.potatoes,
-                        coldFanta: order.fanta,
-                        time: record.date
+                        rotisserieChicken: orderState.chicken,
+                        macAndCheese: orderState.mac,
+                        mashedPotatoes: orderState.potatoes,
+                        coldFanta: orderState.fanta,
+                        time: record.time
                     })
                 });
             } catch (e) {
@@ -888,9 +865,12 @@
             }
 
             hasPlacedOrder = true;
-            triggerConfetti();
             closeModal('summaryModal');
-            document.getElementById('successModal').style.display = 'flex';
+            openModal('successModal');
+
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            }
 
             document.getElementById('navOrderBtn').innerText = "Order Placed";
             document.getElementById('heroOrderBtn').innerText = "Order Placed";
@@ -898,100 +878,93 @@
             document.getElementById('heroOrderBtn').disabled = true;
         }
 
-        /* -------------------------------------------------------------------------- */
-        /*  4. CONFETTI CELEBRATION ENGINE                                            */
-        /* -------------------------------------------------------------------------- */
-        function triggerConfetti() {
-            const confettiCanvas = document.getElementById('confettiCanvas');
-            const cCtx = confettiCanvas.getContext('2d');
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
-
-            let pieces = [];
-            for (let i = 0; i < 120; i++) {
-                pieces.push({
-                    x: Math.random() * confettiCanvas.width,
-                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
-                    size: Math.random() * 8 + 4,
-                    color: ['#ff6b00', '#10b981', '#f59e0b', '#ffffff'][Math.floor(Math.random() * 4)],
-                    speed: Math.random() * 4 + 2,
-                    rotation: Math.random() * 360
-                });
-            }
-
-            function drawConfetti() {
-                cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-                pieces.forEach(p => {
-                    p.y += p.speed;
-                    p.rotation += 4;
-                    cCtx.save();
-                    cCtx.translate(p.x, p.y);
-                    cCtx.rotate((p.rotation * Math.PI) / 180);
-                    cCtx.fillStyle = p.color;
-                    cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-                    cCtx.restore();
-                });
-                if (pieces.some(p => p.y < confettiCanvas.height)) {
-                    requestAnimationFrame(drawConfetti);
-                } else {
-                    cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-                }
-            }
-            drawConfetti();
-        }
-
-        /* -------------------------------------------------------------------------- */
-        /*  5. ADMIN DASHBOARD LOGIC                                                  */
-        /* -------------------------------------------------------------------------- */
+        /* Admin Controls */
         function openAdminPrompt() {
             document.getElementById('adminPassInput').value = "";
-            document.getElementById('adminAuthModal').style.display = 'flex';
+            openModal('adminAuthModal');
         }
 
-        function checkAdminPass() {
+        function verifyAdminPass() {
             const pass = document.getElementById('adminPassInput').value;
-            if (pass === "ADGH050213") {
+            if (pass === ADMIN_PASSWORD) {
                 closeModal('adminAuthModal');
-                renderAdminOrders();
-                document.getElementById('adminDashboardModal').style.display = 'flex';
+                renderAdminLogs();
+                openModal('adminDashboardModal');
             } else {
                 alert("Incorrect Admin Password!");
             }
         }
 
-        function renderAdminOrders() {
-            const container = document.getElementById('adminOrdersList');
-            const orders = JSON.parse(localStorage.getItem('autumn_feast_orders') || '[]');
+        function renderAdminLogs() {
+            const logs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const container = document.getElementById('adminLogContainer');
+            container.innerHTML = "";
 
-            if (orders.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No saved orders found.</p>`;
+            if (logs.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">No saved order records found.</p>`;
                 return;
             }
 
-            container.innerHTML = orders.map(ord => {
-                const details = Object.entries(ord.items)
+            logs.forEach(item => {
+                const details = Object.entries(item.items)
                     .filter(([_, qty]) => qty > 0)
-                    .map(([key, qty]) => `${itemNames[key]}: ${qty}`)
+                    .map(([key, qty]) => `${itemCatalog[key]}: x${qty}`)
                     .join(", ");
 
-                return `
-                    <div style="border-bottom: 1px solid var(--card-border); padding: 12px 0;">
-                        <div style="display: flex; justify-content: space-between; color: var(--accent-orange); font-weight: bold;">
-                            <span>${ord.name}</span>
-                            <span style="font-size: 12px; color: var(--text-secondary);">${ord.date}</span>
+                container.innerHTML += `
+                    <div style="border-bottom: 1px solid var(--glass-border); padding: 12px 0;">
+                        <div style="display: flex; justify-content: space-between; color: var(--harvest-gold); font-weight: bold;">
+                            <span>${item.name}</span>
+                            <span style="font-size: 12px; color: var(--text-muted);">${item.time}</span>
                         </div>
                         <div style="font-size: 14px; color: var(--text-primary); margin-top: 6px;">${details}</div>
                     </div>
                 `;
-            }).join('');
+            });
         }
 
-        function clearAllOrders() {
-            if (confirm("Are you sure you want to clear all saved local orders?")) {
-                localStorage.removeItem('autumn_feast_orders');
-                renderAdminOrders();
+        function clearAdminLogs() {
+            if (confirm("Clear all local order logs?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                renderAdminLogs();
             }
         }
+
+        /* Particle Canvas */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2.5 + 1,
+                speedY: Math.random() * 0.8 + 0.3,
+                opacity: Math.random() * 0.5 + 0.2
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.y -= p.speedY;
+                if (p.y < 0) p.y = canvas.height;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(245, 158, 11, ${p.opacity})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
     </script>
 </body>
 </html>
