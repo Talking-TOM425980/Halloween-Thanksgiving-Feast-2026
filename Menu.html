@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Autumn Feast 🎃 App Experience</title>
+    <title>Autumn Feast 🎃 Interactive Gaze Pumpkin Edition</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-deep: #05070f;
-            --card-glass: rgba(15, 20, 35, 0.75);
+            --bg-deep: #05070e;
+            --card-glass: rgba(15, 21, 36, 0.78);
             --card-border: rgba(255, 255, 255, 0.08);
             --card-border-active: rgba(255, 107, 0, 0.6);
             --primary-emerald: #10b981;
             --accent-orange: #ff6b00;
-            --orange-glow: rgba(255, 107, 0, 0.5);
+            --orange-glow: rgba(255, 107, 0, 0.45);
             --gold-accent: #f59e0b;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
@@ -30,7 +31,6 @@
             padding: 0;
             font-family: var(--font-body);
             -webkit-tap-highlight-color: transparent;
-            cursor: none !important; /* Custom glowing app cursor */
         }
 
         body {
@@ -43,63 +43,43 @@
         }
 
         /* Canvas Layers */
-        #webglCanvas, #vfxCanvas, #nukeCanvas {
+        #stageCanvas, #vfxCanvas, #nukeCanvas {
             position: fixed;
             inset: 0;
             pointer-events: none;
         }
-        #webglCanvas { z-index: 0; }
+        #stageCanvas { z-index: 0; pointer-events: auto; cursor: pointer; }
         #vfxCanvas { z-index: 10; }
         #nukeCanvas { z-index: 3000; }
 
-        /* Custom Glowing App Cursor */
-        .app-cursor {
-            position: fixed;
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--accent-orange);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-            z-index: 4000;
-            box-shadow: 0 0 15px var(--accent-orange);
-        }
-        .app-cursor-dot {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: var(--gold-accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 4001;
-            box-shadow: 0 0 10px var(--gold-accent);
-        }
-
-        /* App Layout Container */
+        /* Custom App Wrapper */
         .app-wrapper {
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            max-width: 1200px;
+            max-width: 1350px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 24px 32px;
+            pointer-events: none; /* Let clicks pass to canvas where needed */
         }
 
-        /* Apple-Grade Glass Header */
+        header, main, section, div, button, input {
+            pointer-events: auto;
+        }
+
+        /* Glass Header */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 28px;
+            padding: 18px 28px;
             background: var(--card-glass);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--card-border);
-            border-radius: 22px;
+            border-radius: 24px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             margin-bottom: 32px;
         }
@@ -107,9 +87,9 @@
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-family: var(--font-display);
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
         }
 
@@ -128,14 +108,26 @@
             border: 1px solid var(--card-border);
             color: var(--text-secondary);
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* High-End App Buttons */
+        .device-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary-emerald);
+            box-shadow: 0 0 8px var(--primary-emerald);
+        }
+
+        /* Buttons */
         .btn {
             background: linear-gradient(135deg, var(--accent-orange), #d95300);
             border: none;
             color: #ffffff;
-            padding: 14px 26px;
+            padding: 14px 28px;
             font-size: 15px;
             font-weight: 700;
             border-radius: 14px;
@@ -168,15 +160,14 @@
             box-shadow: none;
         }
 
-        /* Welcome Stage */
+        /* Welcome Hero Stage */
         .welcome-stage {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            max-width: 650px;
-            padding: 40px 0;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 48px;
+            align-items: center;
+            padding: 20px 0;
         }
 
         .pill-tag {
@@ -187,17 +178,19 @@
             font-weight: 800;
             padding: 6px 16px;
             border-radius: 100px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             letter-spacing: 1px;
             text-transform: uppercase;
+            display: inline-block;
         }
 
         h1 {
             font-family: var(--font-display);
-            font-size: 58px;
+            font-size: 60px;
             font-weight: 800;
-            line-height: 1.08;
-            margin-bottom: 20px;
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            margin-bottom: 24px;
         }
 
         h1 span {
@@ -210,7 +203,8 @@
             font-size: 18px;
             color: var(--text-secondary);
             line-height: 1.6;
-            margin-bottom: 32px;
+            margin-bottom: 36px;
+            max-width: 580px;
         }
 
         /* Dish Selection Stage */
@@ -219,39 +213,33 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            padding-bottom: 100px;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
+            padding-bottom: 120px;
         }
 
         .stage-title {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
         }
 
         .stage-title h2 {
             font-family: var(--font-display);
-            font-size: 34px;
+            font-size: 36px;
             font-weight: 800;
         }
 
         .stage-title p {
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 15px;
             margin-top: 6px;
         }
 
-        /* 3D Glass Dish Grid */
+        /* 3D Glass Menu Grid */
         .dish-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+            gap: 28px;
             width: 100%;
-            max-width: 900px;
+            max-width: 980px;
             perspective: 1200px;
         }
 
@@ -265,40 +253,40 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 24px;
+            border-radius: 28px;
+            padding: 28px;
             display: flex;
             align-items: center;
             gap: 20px;
             cursor: pointer;
             position: relative;
-            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             z-index: 2;
         }
 
         .dish-card-3d:hover {
             border-color: var(--card-border-active);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 107, 0, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 107, 0, 0.25);
             transform: translateY(-4px) scale(1.01);
         }
 
         .dish-icon-box {
-            width: 68px;
-            height: 68px;
-            border-radius: 18px;
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--card-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 38px;
             flex-shrink: 0;
         }
 
         .dish-details { flex: 1; }
 
         .dish-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 4px;
@@ -315,38 +303,38 @@
             color: #fff;
             font-size: 13px;
             font-weight: 800;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 100px;
             display: none;
             box-shadow: 0 0 15px var(--orange-glow);
         }
 
-        /* Expandable Quantity Drawer */
+        /* Drawer */
         .qty-drawer {
             background: rgba(10, 14, 24, 0.95);
             border: 1px solid var(--card-border);
             border-top: none;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            padding: 0 20px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            padding: 0 24px;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+            transition: max-height 0.35s ease, padding 0.35s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: -8px;
+            margin-top: -10px;
             z-index: 1;
         }
 
         .qty-drawer.open {
-            max-height: 75px;
-            padding: 14px 20px;
+            max-height: 80px;
+            padding: 16px 24px;
             border-color: var(--card-border-active);
         }
 
         .drawer-label {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-secondary);
             font-weight: 600;
         }
@@ -354,7 +342,7 @@
         .qty-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .qty-btn {
@@ -370,15 +358,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
         }
 
-        .qty-btn:hover { background: rgba(255, 255, 255, 0.2); }
-
-        /* Floating Sticky Order Bar */
+        /* Floating Order Bar */
         .sticky-order-bar {
             position: fixed;
-            bottom: 28px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(120px);
             background: rgba(18, 24, 38, 0.95);
@@ -413,16 +398,17 @@
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            padding: 16px;
+            padding: 20px;
+            pointer-events: auto;
         }
 
         .modal-card {
             background: rgba(16, 21, 33, 0.95);
             border: 1px solid var(--card-border);
-            border-radius: 28px;
-            padding: 36px 28px;
+            border-radius: 32px;
+            padding: 40px;
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
             max-height: 90vh;
             overflow-y: auto;
@@ -430,22 +416,22 @@
 
         .modal-card h2 {
             font-family: var(--font-display);
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 800;
             margin-bottom: 8px;
         }
 
         .modal-card p.sub {
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 15px;
             margin-bottom: 24px;
         }
 
         input[type="text"], input[type="password"] {
             width: 100%;
-            padding: 16px 20px;
-            margin-bottom: 22px;
-            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            border-radius: 16px;
             border: 1px solid var(--card-border);
             background: rgba(8, 11, 18, 0.8);
             color: #fff;
@@ -453,18 +439,13 @@
             outline: none;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus {
-            border-color: var(--accent-orange);
-            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
-        }
-
         .review-box {
             background: rgba(8, 11, 18, 0.6);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 18px;
+            border-radius: 20px;
+            padding: 20px;
             margin-bottom: 24px;
-            max-height: 220px;
+            max-height: 240px;
             overflow-y: auto;
         }
 
@@ -473,12 +454,13 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .review-item:last-child { border-bottom: none; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
+            .welcome-stage { grid-template-columns: 1fr; text-align: center; gap: 24px; }
             h1 { font-size: 40px; }
             .dish-grid { grid-template-columns: 1fr; gap: 16px; }
             .sticky-order-bar { width: 92%; padding: 10px 20px; }
@@ -487,12 +469,8 @@
 </head>
 <body>
 
-    <!-- Custom Cursor -->
-    <div class="app-cursor" id="appCursor"></div>
-    <div class="app-cursor-dot" id="appCursorDot"></div>
-
-    <!-- WebGL 3D Canvas & VFX -->
-    <canvas id="webglCanvas"></canvas>
+    <!-- Canvases -->
+    <canvas id="stageCanvas"></canvas>
     <canvas id="vfxCanvas"></canvas>
     <canvas id="nukeCanvas"></canvas>
 
@@ -501,7 +479,7 @@
         <header>
             <div class="brand-logo">
                 <span>🎃 Autumn Feast</span>
-                <div class="device-badge">App Mode</div>
+                <div class="device-badge">Gaze Tracking Engine</div>
             </div>
             <div>
                 <button class="btn btn-secondary" onclick="openAdminPrompt()">Admin</button>
@@ -509,23 +487,28 @@
             </div>
         </header>
 
-        <!-- Stage 1: Welcome Intro -->
+        <!-- Stage 1: Welcome Hero -->
         <main class="welcome-stage" id="welcomeStage">
-            <div class="pill-tag">🍁 Seasonal Experience</div>
-            <h1>Autumn's Here,<br><span>So Is Our Feast!</span></h1>
-            <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Enjoy your chicken with warm macaroni and cheese, alongside creamy mashed potatoes and gravy. Dive into a cozy holiday celebration crafted for family and friends.</p>
-            <button class="btn" id="heroOrderBtn" onclick="startOrderFlow()" style="padding: 18px 40px; font-size: 18px;">Place Your Order ✨</button>
+            <div>
+                <div class="pill-tag">👀 Interactive Gaze Pumpkin</div>
+                <h1>Autumn's Here,<br><span>So Is Our Feast!</span></h1>
+                <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Move your mouse or finger to watch the pumpkin's eyes track you in real-time, or tap its face to trigger a spooky ghost burst!</p>
+                <button class="btn" id="heroOrderBtn" onclick="startOrderFlow()" style="padding: 18px 44px; font-size: 18px;">Place Your Order ✨</button>
+            </div>
+            <div style="min-height: 280px; display: flex; align-items: center; justify-content: center;">
+                <p style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">( Tap or Move Cursor Near Pumpkin )</p>
+            </div>
         </main>
 
         <!-- Stage 2: Interactive Dish Selection Stage -->
         <section class="dish-selection-stage" id="dishStage">
             <div class="stage-title">
                 <h2 id="guestGreetingTitle">Select Your Feast Items</h2>
-                <p>Click any item card for 3D graphics, particle animations, and portion selection.</p>
+                <p>Click any item card to trigger interactive culinary effects and open quantity controls.</p>
             </div>
 
             <div class="dish-grid">
-                <!-- Rotisserie Chicken Card -->
+                <!-- Rotisserie Chicken -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('chicken', event)">
                         <div class="dish-icon-box">🍗</div>
@@ -545,7 +528,7 @@
                     </div>
                 </div>
 
-                <!-- Mac & Cheese Card -->
+                <!-- Mac & Cheese -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('mac', event)">
                         <div class="dish-icon-box">🧀</div>
@@ -565,7 +548,7 @@
                     </div>
                 </div>
 
-                <!-- Mashed Potatoes Card -->
+                <!-- Mashed Potatoes -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('potatoes', event)">
                         <div class="dish-icon-box">🥔</div>
@@ -585,7 +568,7 @@
                     </div>
                 </div>
 
-                <!-- Cold Fanta Card -->
+                <!-- Cold Fanta -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('fanta', event)">
                         <div class="dish-icon-box">🥤</div>
@@ -608,13 +591,13 @@
         </section>
     </div>
 
-    <!-- Floating Order Review Bar -->
+    <!-- Floating Sticky Bar -->
     <div class="sticky-order-bar" id="stickyOrderBar">
         <div>
             <div style="font-size: 11px; color: var(--text-secondary);">Total Items</div>
             <div style="font-size: 18px; font-weight: 800; color: var(--accent-orange);" id="totalItemsDisplay">0 Items</div>
         </div>
-        <button class="btn" style="padding: 12px 22px; font-size: 14px;" onclick="openSummaryModal()">Review Order ✨</button>
+        <button class="btn" style="padding: 12px 24px; font-size: 14px;" onclick="openSummaryModal()">Review Order ✨</button>
     </div>
 
     <!-- Modals -->
@@ -644,9 +627,9 @@
 
     <div class="modal-overlay" id="successModal">
         <div class="modal-card" style="text-align: center;">
-            <div style="font-size: 60px; margin-bottom: 14px;">🎃🍬</div>
+            <div style="font-size: 64px; margin-bottom: 14px;">🎃🍬</div>
             <h2>Pumpkin Nuke Dispatched!</h2>
-            <p class="sub" style="margin-top: 6px;">Order submitted successfully! Enjoy your Halloween Candy Feast.</p>
+            <p class="sub" style="margin-top: 6px;">Your order was submitted successfully! Enjoy your Halloween Candy Feast.</p>
             <button class="btn" style="width: 100%; margin-top: 14px;" onclick="closeModal('successModal')">Close</button>
         </div>
     </div>
@@ -654,7 +637,7 @@
     <div class="modal-overlay" id="adminAuthModal">
         <div class="modal-card">
             <h2>Secret Admin Access 🔒</h2>
-            <p class="sub">Enter passcode to view order logs.</p>
+            <p class="sub">Enter passcode to view saved local orders.</p>
             <input type="password" id="adminPassInput" placeholder="Passcode">
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('adminAuthModal')">Cancel</button>
@@ -666,7 +649,7 @@
     <div class="modal-overlay" id="adminDashboardModal">
         <div class="modal-card" style="max-width: 520px;">
             <h2>Admin Dashboard 📊</h2>
-            <p class="sub">Saved Orders Log:</p>
+            <p class="sub">Local Order Logs:</p>
             <div class="review-box" id="adminOrdersList"></div>
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="clearAllOrders()">Clear Orders</button>
@@ -677,104 +660,171 @@
 
     <script>
         /* -------------------------------------------------------------------------- */
-        /*  1. CUSTOM CURSOR TRACKING                                                 */
+        /*  1. REAL-TIME SMOOTH EYE GAZE TRACKING ENGINE                              */
         /* -------------------------------------------------------------------------- */
-        const cursor = document.getElementById('appCursor');
-        const cursorDot = document.getElementById('appCursorDot');
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-        let curX = mouseX, curY = mouseY;
+        const canvas = document.getElementById('stageCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let targetEyeX = 0, targetEyeY = 0;
+        let curEyeX = 0, curEyeY = 0;
+
+        let ghosts = [];
+
+        function resizeStage() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeStage);
+        resizeStage();
 
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            cursorDot.style.left = `${mouseX}px`;
-            cursorDot.style.top = `${mouseY}px`;
         });
 
-        function animateCursor() {
-            curX += (mouseX - curX) * 0.2;
-            curY += (mouseY - curY) * 0.2;
-            cursor.style.left = `${curX}px`;
-            cursor.style.top = `${curY}px`;
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            }
+        });
 
-        /* -------------------------------------------------------------------------- */
-        /*  2. NATIVE WEBGL 3D PUMPKIN & PARTICLES SCENE                              */
-        /* -------------------------------------------------------------------------- */
-        const canvas = document.getElementById('webglCanvas');
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        
-        // Simple fallback 2D renderer for background particles + 3D simulation
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let angleY = 0;
+        // Click on Canvas triggers Spooky Ghost Burst
+        canvas.addEventListener('click', (e) => {
+            triggerGhostBurst(e.clientX, e.clientY);
+        });
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            particles = [];
-            for (let i = 0; i < 60; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 3 + 1,
-                    speedY: Math.random() * 1 + 0.5,
-                    color: Math.random() > 0.5 ? '#ff6b00' : '#10b981'
+        function triggerGhostBurst(x, y) {
+            for (let i = 0; i < 12; i++) {
+                ghosts.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: Math.random() * -6 - 2,
+                    size: Math.random() * 24 + 20,
+                    alpha: 1.0,
+                    char: Math.random() > 0.5 ? '👻' : '✨'
                 });
             }
         }
 
-        function render3DBackground() {
+        function renderStage() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw ambient background glow gradient
-            const grad = ctx.createRadialGradient(canvas.width * 0.75, canvas.height * 0.5, 50, canvas.width * 0.75, canvas.height * 0.5, canvas.width * 0.6);
-            grad.addColorStop(0, 'rgba(255, 107, 0, 0.12)');
-            grad.addColorStop(1, 'transparent');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw floating particles
-            particles.forEach(p => {
-                p.y += p.speedY;
-                if (p.y > canvas.height) p.y = -10;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = 0.45;
-                ctx.fill();
-            });
+            // Pumpkin Center Location
+            const px = canvas.width > 850 ? canvas.width * 0.72 : canvas.width * 0.5;
+            const py = canvas.height * 0.52;
 
-            // Render 3D Wireframe/Glossy Pumpkin Simulation in background
-            angleY += 0.01;
+            // Calculate Target Pupil Offsets based on distance from cursor
+            const dx = mouseX - px;
+            const dy = mouseY - py;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const maxOffset = 14;
+
+            targetEyeX = (dx / (dist || 1)) * Math.min(dist * 0.05, maxOffset);
+            targetEyeY = (dy / (dist || 1)) * Math.min(dist * 0.05, maxOffset);
+
+            // Smooth Lerp Physics
+            curEyeX += (targetEyeX - curEyeX) * 0.08;
+            curEyeY += (targetEyeY - curEyeY) * 0.08;
+
+            // Render Pumpkin Outer Glow
             ctx.save();
-            const px = canvas.width > 800 ? canvas.width * 0.75 : canvas.width * 0.5;
-            const py = canvas.height * 0.55;
             ctx.translate(px, py);
 
-            // Pumpkin body rings
+            const glow = ctx.createRadialGradient(0, 0, 30, 0, 0, 160);
+            glow.addColorStop(0, 'rgba(255, 107, 0, 0.3)');
+            glow.addColorStop(1, 'transparent');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(0, 0, 160, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pumpkin Body Ribs
             for (let i = -3; i <= 3; i++) {
                 ctx.beginPath();
-                let radiusX = 120 - Math.abs(i) * 18;
-                let radiusY = 90 - Math.abs(i) * 6;
-                ctx.ellipse(i * 20 * Math.sin(angleY), i * 5, radiusX, radiusY, 0, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(255, 107, ${100 + i * 20}, 0.15)`;
-                ctx.lineWidth = 4;
+                ctx.ellipse(i * 18, 0, 95 - Math.abs(i) * 12, 80, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, ${100 + Math.abs(i) * 15}, 0, 0.82)`;
+                ctx.fill();
+                ctx.strokeStyle = '#2d0a00';
+                ctx.lineWidth = 2.5;
                 ctx.stroke();
             }
+
+            // Pumpkin Stem
+            ctx.fillStyle = '#2e6f40';
+            ctx.beginPath();
+            ctx.moveTo(-10, -78);
+            ctx.lineTo(10, -78);
+            ctx.lineTo(6, -100);
+            ctx.lineTo(-14, -100);
+            ctx.closePath();
+            ctx.fill();
+
+            // Realistic Eye Sockets & Pupil Tracking
+            const drawEye = (eyeX) => {
+                // Outer Socket Recess
+                ctx.beginPath();
+                ctx.moveTo(eyeX - 22, -18);
+                ctx.lineTo(eyeX + 22, -18);
+                ctx.lineTo(eyeX, -50);
+                ctx.closePath();
+                ctx.fillStyle = '#120300';
+                ctx.fill();
+                ctx.strokeStyle = '#ff6b00';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Smooth Tracking Pupil
+                ctx.beginPath();
+                ctx.arc(eyeX + curEyeX, -28 + curEyeY, 7, 0, Math.PI * 2);
+                ctx.fillStyle = '#00ffcc';
+                ctx.fill();
+                ctx.shadowColor = '#00ffcc';
+                ctx.shadowBlur = 12;
+            };
+
+            drawEye(-38); // Left Eye
+            drawEye(38);  // Right Eye
+
+            // Glowing Spooky Mouth
+            ctx.beginPath();
+            ctx.moveTo(-45, 15);
+            ctx.quadraticCurveTo(0, 55, 45, 15);
+            ctx.quadraticCurveTo(0, 35, -45, 15);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fill();
+            ctx.shadowColor = '#ff6b00';
+            ctx.shadowBlur = 15;
+
             ctx.restore();
 
-            requestAnimationFrame(render3DBackground);
+            // Render Spooky Ghosts
+            ghosts.forEach((g, idx) => {
+                g.x += g.vx;
+                g.y += g.vy;
+                g.alpha -= 0.015;
+                if (g.alpha > 0) {
+                    ctx.save();
+                    ctx.globalAlpha = g.alpha;
+                    ctx.font = `${g.size}px sans-serif`;
+                    ctx.fillText(g.char, g.x, g.y);
+                    ctx.restore();
+                } else {
+                    ghosts.splice(idx, 1);
+                }
+            });
+
+            requestAnimationFrame(renderStage);
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        render3DBackground();
+        renderStage();
 
         /* -------------------------------------------------------------------------- */
-        /*  3. ITEM INTERACTIVE VFX ENGINE                                            */
+        /*  2. ITEM INTERACTIVE VFX ENGINE                                            */
         /* -------------------------------------------------------------------------- */
         const vfxCanvas = document.getElementById('vfxCanvas');
         const vctx = vfxCanvas.getContext('2d');
@@ -786,14 +836,13 @@
             const x = event ? event.clientX : window.innerWidth / 2;
             const y = event ? event.clientY : window.innerHeight / 2;
 
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 22; i++) {
                 activeVfx.push({
                     type: type,
-                    x: x,
-                    y: y,
-                    vx: (Math.random() - 0.5) * 7,
-                    vy: (Math.random() - 0.5) * 7 - 2,
-                    size: Math.random() * 8 + 3,
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6 - 2,
+                    size: Math.random() * 7 + 3,
                     life: 1.0,
                     decay: Math.random() * 0.03 + 0.02
                 });
@@ -803,23 +852,19 @@
         function renderVfx() {
             vctx.clearRect(0, 0, vfxCanvas.width, vfxCanvas.height);
             activeVfx.forEach((p, idx) => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life -= p.decay;
-
+                p.x += p.vx; p.y += p.vy; p.life -= p.decay;
                 vctx.save();
                 vctx.globalAlpha = Math.max(p.life, 0);
 
                 if (p.type === 'chicken') {
                     vctx.fillStyle = '#ff4500'; vctx.beginPath(); vctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); vctx.fill();
                 } else if (p.type === 'mac') {
-                    vctx.fillStyle = '#f59e0b'; vctx.fillRect(p.x, p.y, p.size * 1.5, p.size * 0.9);
+                    vctx.fillStyle = '#f59e0b'; vctx.fillRect(p.x, p.y, p.size * 1.5, p.size * 0.8);
                 } else if (p.type === 'potatoes') {
-                    vctx.fillStyle = '#f8fafc'; vctx.beginPath(); vctx.arc(p.x, p.y, p.size * 1.6, 0, Math.PI * 2); vctx.fill();
+                    vctx.fillStyle = '#f8fafc'; vctx.beginPath(); vctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2); vctx.fill();
                 } else if (p.type === 'fanta') {
-                    vctx.strokeStyle = '#ff6b00'; vctx.lineWidth = 2.5; vctx.beginPath(); vctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); vctx.stroke();
+                    vctx.strokeStyle = '#ff6b00'; vctx.lineWidth = 2; vctx.beginPath(); vctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); vctx.stroke();
                 }
-
                 vctx.restore();
                 if (p.life <= 0) activeVfx.splice(idx, 1);
             });
@@ -828,7 +873,7 @@
         renderVfx();
 
         /* -------------------------------------------------------------------------- */
-        /*  4. HALLOWEEN CANDY PUMPKIN NUKE EXPLOSION                                 */
+        /*  3. HALLOWEEN CANDY PUMPKIN NUKE EXPLOSION                                 */
         /* -------------------------------------------------------------------------- */
         const nukeCanvas = document.getElementById('nukeCanvas');
         const nctx = nukeCanvas.getContext('2d');
@@ -842,12 +887,11 @@
             let particles = [];
             const candyTypes = ['🍬', '🍭', '🍫', '🌽', '🎃', '👻', '✨', '⚡'];
 
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 180; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 18 + 5;
                 particles.push({
-                    x: cx,
-                    y: cy,
+                    x: cx, y: cy,
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed - 4,
                     candy: candyTypes[Math.floor(Math.random() * candyTypes.length)],
@@ -877,11 +921,8 @@
 
                 let alive = false;
                 particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.28;
-                    p.rotation += p.vRot;
-                    p.alpha -= p.decay;
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.28;
+                    p.rotation += p.vRot; p.alpha -= p.decay;
 
                     if (p.alpha > 0) {
                         alive = true;
@@ -908,7 +949,7 @@
         }
 
         /* -------------------------------------------------------------------------- */
-        /*  5. ORDER FLOW & LOGIC                                                     */
+        /*  4. ORDER SYSTEM LOGIC                                                     */
         /* -------------------------------------------------------------------------- */
         let customerName = "";
         let hasPlacedOrder = false;
@@ -966,7 +1007,7 @@
             let current = order[item] + change;
             if (current < 0) current = 0;
             if (current > max) {
-                alert(`Maximum quantity for ${itemNames[item]} is ${max}.`);
+                alert(`Maximum limit for ${itemNames[item]} is ${max}.`);
                 return;
             }
             order[item] = current;
@@ -1017,12 +1058,10 @@
                 items: { ...order }
             };
 
-            // Local storage persistence
             let localOrders = JSON.parse(localStorage.getItem('autumn_feast_orders') || '[]');
             localOrders.push(record);
             localStorage.setItem('autumn_feast_orders', JSON.stringify(localOrders));
 
-            // Formspree Dispatch
             try {
                 await fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
@@ -1037,7 +1076,7 @@
                     })
                 });
             } catch (e) {
-                console.log("Local backup saved.");
+                console.log("Saved locally.");
             }
 
             hasPlacedOrder = true;
@@ -1053,7 +1092,7 @@
         }
 
         /* -------------------------------------------------------------------------- */
-        /*  6. ADMIN DASHBOARD                                                        */
+        /*  5. ADMIN DASHBOARD                                                        */
         /* -------------------------------------------------------------------------- */
         function openAdminPrompt() {
             document.getElementById('adminPassInput').value = "";
