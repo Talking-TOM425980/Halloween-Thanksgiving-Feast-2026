@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Autumn Feast 🎃 Interactive Gaze Pumpkin Edition</title>
+    <title>Autumn Feast 🎃 High-End Ordering App</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --bg-deep: #05070e;
-            --card-glass: rgba(15, 21, 36, 0.78);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --card-border-active: rgba(255, 107, 0, 0.6);
+            --card-glass: rgba(15, 21, 36, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-border-active: rgba(255, 107, 0, 0.7);
             --primary-emerald: #10b981;
             --accent-orange: #ff6b00;
             --orange-glow: rgba(255, 107, 0, 0.45);
@@ -42,34 +42,29 @@
             position: relative;
         }
 
-        /* Canvas Layers */
+        /* Canvas Background Layers */
         #stageCanvas, #vfxCanvas, #nukeCanvas {
             position: fixed;
             inset: 0;
             pointer-events: none;
         }
-        #stageCanvas { z-index: 0; pointer-events: auto; cursor: pointer; }
+        #stageCanvas { z-index: 0; }
         #vfxCanvas { z-index: 10; }
         #nukeCanvas { z-index: 3000; }
 
-        /* Custom App Wrapper */
+        /* Application Container */
         .app-wrapper {
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            max-width: 1350px;
+            max-width: 1300px;
             margin: 0 auto;
-            padding: 24px 32px;
-            pointer-events: none; /* Let clicks pass to canvas where needed */
+            padding: 24px 28px;
         }
 
-        header, main, section, div, button, input {
-            pointer-events: auto;
-        }
-
-        /* Glass Header */
+        /* Glass Navigation Bar */
         header {
             display: flex;
             justify-content: space-between;
@@ -122,7 +117,7 @@
             box-shadow: 0 0 8px var(--primary-emerald);
         }
 
-        /* Buttons */
+        /* Apple Glossy Buttons */
         .btn {
             background: linear-gradient(135deg, var(--accent-orange), #d95300);
             border: none;
@@ -133,7 +128,7 @@
             border-radius: 14px;
             cursor: pointer;
             box-shadow: 0 8px 25px var(--orange-glow);
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -141,7 +136,7 @@
         }
 
         .btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.02);
+            transform: translateY(-2px);
             box-shadow: 0 12px 30px var(--orange-glow);
         }
 
@@ -160,7 +155,7 @@
             box-shadow: none;
         }
 
-        /* Welcome Hero Stage */
+        /* Hero Landing Stage */
         .welcome-stage {
             flex: 1;
             display: grid;
@@ -186,7 +181,7 @@
 
         h1 {
             font-family: var(--font-display);
-            font-size: 60px;
+            font-size: 58px;
             font-weight: 800;
             line-height: 1.05;
             letter-spacing: -1.5px;
@@ -207,7 +202,7 @@
             max-width: 580px;
         }
 
-        /* Dish Selection Stage */
+        /* Dish Selection Menu Stage */
         .dish-selection-stage {
             display: none;
             flex-direction: column;
@@ -233,14 +228,13 @@
             margin-top: 6px;
         }
 
-        /* 3D Glass Menu Grid */
+        /* Menu Grid */
         .dish-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 28px;
             width: 100%;
             max-width: 980px;
-            perspective: 1200px;
         }
 
         .dish-card-wrapper {
@@ -260,14 +254,14 @@
             gap: 20px;
             cursor: pointer;
             position: relative;
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.25s ease;
             z-index: 2;
         }
 
         .dish-card-3d:hover {
             border-color: var(--card-border-active);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 107, 0, 0.25);
-            transform: translateY(-4px) scale(1.01);
+            transform: translateY(-4px);
         }
 
         .dish-icon-box {
@@ -309,7 +303,7 @@
             box-shadow: 0 0 15px var(--orange-glow);
         }
 
-        /* Drawer */
+        /* Quantity Drawer */
         .qty-drawer {
             background: rgba(10, 14, 24, 0.95);
             border: 1px solid var(--card-border);
@@ -360,7 +354,7 @@
             justify-content: center;
         }
 
-        /* Floating Order Bar */
+        /* Sticky Review Bar */
         .sticky-order-bar {
             position: fixed;
             bottom: 30px;
@@ -399,7 +393,6 @@
             align-items: center;
             z-index: 2000;
             padding: 20px;
-            pointer-events: auto;
         }
 
         .modal-card {
@@ -475,11 +468,11 @@
     <canvas id="nukeCanvas"></canvas>
 
     <div class="app-wrapper">
-        <!-- Header -->
+        <!-- Header Navigation -->
         <header>
             <div class="brand-logo">
                 <span>🎃 Autumn Feast</span>
-                <div class="device-badge">Gaze Tracking Engine</div>
+                <div class="device-badge">Live Interactive App</div>
             </div>
             <div>
                 <button class="btn btn-secondary" onclick="openAdminPrompt()">Admin</button>
@@ -487,28 +480,26 @@
             </div>
         </header>
 
-        <!-- Stage 1: Welcome Hero -->
+        <!-- Stage 1: Hero Welcome -->
         <main class="welcome-stage" id="welcomeStage">
             <div>
-                <div class="pill-tag">👀 Interactive Gaze Pumpkin</div>
+                <div class="pill-tag">🍁 Seasonal Celebration</div>
                 <h1>Autumn's Here,<br><span>So Is Our Feast!</span></h1>
-                <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Move your mouse or finger to watch the pumpkin's eyes track you in real-time, or tap its face to trigger a spooky ghost burst!</p>
+                <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Enjoy warm macaroni and cheese alongside creamy mashed potatoes and gravy. Dive into a cozy holiday celebration crafted for family and friends.</p>
                 <button class="btn" id="heroOrderBtn" onclick="startOrderFlow()" style="padding: 18px 44px; font-size: 18px;">Place Your Order ✨</button>
             </div>
-            <div style="min-height: 280px; display: flex; align-items: center; justify-content: center;">
-                <p style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">( Tap or Move Cursor Near Pumpkin )</p>
-            </div>
+            <div style="min-height: 280px;"></div>
         </main>
 
-        <!-- Stage 2: Interactive Dish Selection Stage -->
+        <!-- Stage 2: Dish Selection Stage -->
         <section class="dish-selection-stage" id="dishStage">
             <div class="stage-title">
                 <h2 id="guestGreetingTitle">Select Your Feast Items</h2>
-                <p>Click any item card to trigger interactive culinary effects and open quantity controls.</p>
+                <p>Click any dish card to trigger interactive culinary effects and choose your portion amounts.</p>
             </div>
 
             <div class="dish-grid">
-                <!-- Rotisserie Chicken -->
+                <!-- Rotisserie Chicken Card -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('chicken', event)">
                         <div class="dish-icon-box">🍗</div>
@@ -528,7 +519,7 @@
                     </div>
                 </div>
 
-                <!-- Mac & Cheese -->
+                <!-- Mac & Cheese Card -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('mac', event)">
                         <div class="dish-icon-box">🧀</div>
@@ -548,7 +539,7 @@
                     </div>
                 </div>
 
-                <!-- Mashed Potatoes -->
+                <!-- Mashed Potatoes Card -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('potatoes', event)">
                         <div class="dish-icon-box">🥔</div>
@@ -568,7 +559,7 @@
                     </div>
                 </div>
 
-                <!-- Cold Fanta -->
+                <!-- Cold Fanta Card -->
                 <div class="dish-card-wrapper">
                     <div class="dish-card-3d" onclick="toggleDish('fanta', event)">
                         <div class="dish-icon-box">🥤</div>
@@ -591,10 +582,10 @@
         </section>
     </div>
 
-    <!-- Floating Sticky Bar -->
+    <!-- Floating Order Bar -->
     <div class="sticky-order-bar" id="stickyOrderBar">
         <div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Total Items</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Total Selected</div>
             <div style="font-size: 18px; font-weight: 800; color: var(--accent-orange);" id="totalItemsDisplay">0 Items</div>
         </div>
         <button class="btn" style="padding: 12px 24px; font-size: 14px;" onclick="openSummaryModal()">Review Order ✨</button>
@@ -604,7 +595,7 @@
     <div class="modal-overlay" id="nameModal">
         <div class="modal-card">
             <h2>Welcome! 🎉</h2>
-            <p class="sub">Please enter your full name to start selecting your order.</p>
+            <p class="sub">Please enter your full name to start selecting your feast order.</p>
             <input type="text" id="userNameInput" placeholder="Enter your full name..." autocomplete="off">
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('nameModal')">Cancel</button>
@@ -660,7 +651,7 @@
 
     <script>
         /* -------------------------------------------------------------------------- */
-        /*  1. REAL-TIME SMOOTH EYE GAZE TRACKING ENGINE                              */
+        /*  1. REAL-TIME GAZE TRACKING STAGE CANVAS                                    */
         /* -------------------------------------------------------------------------- */
         const canvas = document.getElementById('stageCanvas');
         const ctx = canvas.getContext('2d');
@@ -669,8 +660,6 @@
         let mouseY = window.innerHeight / 2;
         let targetEyeX = 0, targetEyeY = 0;
         let curEyeX = 0, curEyeY = 0;
-
-        let ghosts = [];
 
         function resizeStage() {
             canvas.width = window.innerWidth;
@@ -692,33 +681,12 @@
             }
         });
 
-        // Click on Canvas triggers Spooky Ghost Burst
-        canvas.addEventListener('click', (e) => {
-            triggerGhostBurst(e.clientX, e.clientY);
-        });
-
-        function triggerGhostBurst(x, y) {
-            for (let i = 0; i < 12; i++) {
-                ghosts.push({
-                    x: x,
-                    y: y,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: Math.random() * -6 - 2,
-                    size: Math.random() * 24 + 20,
-                    alpha: 1.0,
-                    char: Math.random() > 0.5 ? '👻' : '✨'
-                });
-            }
-        }
-
         function renderStage() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Pumpkin Center Location
             const px = canvas.width > 850 ? canvas.width * 0.72 : canvas.width * 0.5;
             const py = canvas.height * 0.52;
 
-            // Calculate Target Pupil Offsets based on distance from cursor
             const dx = mouseX - px;
             const dy = mouseY - py;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -727,23 +695,23 @@
             targetEyeX = (dx / (dist || 1)) * Math.min(dist * 0.05, maxOffset);
             targetEyeY = (dy / (dist || 1)) * Math.min(dist * 0.05, maxOffset);
 
-            // Smooth Lerp Physics
+            // Lerp dampening
             curEyeX += (targetEyeX - curEyeX) * 0.08;
             curEyeY += (targetEyeY - curEyeY) * 0.08;
 
-            // Render Pumpkin Outer Glow
             ctx.save();
             ctx.translate(px, py);
 
+            // Pumpkin Glow
             const glow = ctx.createRadialGradient(0, 0, 30, 0, 0, 160);
-            glow.addColorStop(0, 'rgba(255, 107, 0, 0.3)');
+            glow.addColorStop(0, 'rgba(255, 107, 0, 0.28)');
             glow.addColorStop(1, 'transparent');
             ctx.fillStyle = glow;
             ctx.beginPath();
             ctx.arc(0, 0, 160, 0, Math.PI * 2);
             ctx.fill();
 
-            // Pumpkin Body Ribs
+            // Pumpkin Body
             for (let i = -3; i <= 3; i++) {
                 ctx.beginPath();
                 ctx.ellipse(i * 18, 0, 95 - Math.abs(i) * 12, 80, 0, 0, Math.PI * 2);
@@ -754,7 +722,7 @@
                 ctx.stroke();
             }
 
-            // Pumpkin Stem
+            // Stem
             ctx.fillStyle = '#2e6f40';
             ctx.beginPath();
             ctx.moveTo(-10, -78);
@@ -764,9 +732,8 @@
             ctx.closePath();
             ctx.fill();
 
-            // Realistic Eye Sockets & Pupil Tracking
+            // Gaze Eyes
             const drawEye = (eyeX) => {
-                // Outer Socket Recess
                 ctx.beginPath();
                 ctx.moveTo(eyeX - 22, -18);
                 ctx.lineTo(eyeX + 22, -18);
@@ -778,45 +745,25 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Smooth Tracking Pupil
+                // Pupil
                 ctx.beginPath();
                 ctx.arc(eyeX + curEyeX, -28 + curEyeY, 7, 0, Math.PI * 2);
                 ctx.fillStyle = '#00ffcc';
                 ctx.fill();
-                ctx.shadowColor = '#00ffcc';
-                ctx.shadowBlur = 12;
             };
 
-            drawEye(-38); // Left Eye
-            drawEye(38);  // Right Eye
+            drawEye(-38);
+            drawEye(38);
 
-            // Glowing Spooky Mouth
+            // Mouth
             ctx.beginPath();
             ctx.moveTo(-45, 15);
             ctx.quadraticCurveTo(0, 55, 45, 15);
             ctx.quadraticCurveTo(0, 35, -45, 15);
             ctx.fillStyle = '#ffaa00';
             ctx.fill();
-            ctx.shadowColor = '#ff6b00';
-            ctx.shadowBlur = 15;
 
             ctx.restore();
-
-            // Render Spooky Ghosts
-            ghosts.forEach((g, idx) => {
-                g.x += g.vx;
-                g.y += g.vy;
-                g.alpha -= 0.015;
-                if (g.alpha > 0) {
-                    ctx.save();
-                    ctx.globalAlpha = g.alpha;
-                    ctx.font = `${g.size}px sans-serif`;
-                    ctx.fillText(g.char, g.x, g.y);
-                    ctx.restore();
-                } else {
-                    ghosts.splice(idx, 1);
-                }
-            });
 
             requestAnimationFrame(renderStage);
         }
@@ -1076,7 +1023,7 @@
                     })
                 });
             } catch (e) {
-                console.log("Saved locally.");
+                console.log("Local backup saved.");
             }
 
             hasPlacedOrder = true;
