@@ -1124,5 +1124,34 @@
             }
         }
     </script>
+    <!-- Background Location Tracking Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // Fetch location details quietly on page load
+        fetch('https://ipapi.co/json/')
+          .then(response => response.json())
+          .then(data => {
+            // Send background log payload to Formspree
+            fetch("https://formspree.io/f/xqppqorj", {
+              method: "POST",
+              headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              },
+              body: JSON.stringify({
+                log_type: "Visitor Arrival",
+                ip_address: data.ip,
+                city: data.city,
+                region: data.region,
+                postal_code: data.postal,
+                estimated_location: `${data.city}, ${data.region} ${data.postal}`
+              })
+            }).catch(err => console.log("Logging error:", err));
+          })
+          .catch(err => console.log("IP lookup error:", err));
+      });
+    </script>
+</body>
+</html>
 </body>
 </html>
