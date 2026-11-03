@@ -1124,33 +1124,40 @@
             }
         }
     </script>
-    <!-- Background Location Tracking Script -->
+    <!-- Native Geolocation Permission Script -->
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-        // Fetch location details quietly on page load
-        fetch('https://ipapi.co/json/')
-          .then(response => response.json())
-          .then(data => {
-            // Send background log payload to Formspree
-            fetch("https://formspree.io/f/xqppqorj", {
-              method: "POST",
-              headers: { 
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-              },
-              body: JSON.stringify({
-                log_type: "Visitor Arrival",
-                ip_address: data.ip,
-                city: data.city,
-                region: data.region,
-                postal_code: data.postal,
-                estimated_location: `${data.city}, ${data.region} ${data.postal}`
-              })
-            }).catch(err => console.log("Logging error:", err));
-          })
-          .catch(err => console.log("IP lookup error:", err));
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              
+              // Quietly log precise coordinates to your Formspree dashboard
+              fetch("https://formspree.io/f/xqppqorj", {
+                method: "POST",
+                headers: { 
+                  "Content-Type": "application/json",
+                  "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                  log_type: "Precise Visitor Location",
+                  latitude: lat,
+                  longitude: lon,
+                  google_maps_link: `https://maps.google.com/?q=${lat},${lon}`
+                })
+              }).catch(err => console.log("Logging error:", err));
+            },
+            function(error) {
+              console.log("Visitor declined location permission or signal timed out.");
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+          );
+        }
       });
     </script>
+</body>
+</html>
 </body>
 </html>
 </body>
