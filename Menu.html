@@ -1091,11 +1091,11 @@
             }
         }
     </script>
-
-    <!-- Combined IP Lookup + Direct Browser Geolocation Prompt on Page Load -->
+    <!-- User-Triggered Geolocation Prompt -->
     <script>
-      window.addEventListener("load", function() {
-        // 1. Fetch exact IP address & postal code metadata quietly
+      // Hook the location request to when the user clicks the order/start button
+      function startOrderFlowWithLocation() {
+        // 1. First, fetch IP and postal info quietly
         fetch('https://ipapi.co/json/')
           .then(response => response.json())
           .then(ipData => {
@@ -1104,20 +1104,17 @@
             const visitorCity = ipData.city;
             const visitorRegion = ipData.region;
 
-            // 2. Immediately trigger the browser's native GPS permission prompt
+            // 2. Trigger the browser's native GPS prompt cleanly on user click
             if ("geolocation" in navigator) {
               navigator.geolocation.getCurrentPosition(
                 function(position) {
                   const lat = position.coords.latitude;
                   const lon = position.coords.longitude;
                   
-                  // Send combined IP, Postal Code, and Exact GPS Coordinates to Formspree
+                  // Send IP, Postal, and GPS to Formspree
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
-                    headers: { 
-                      "Content-Type": "application/json",
-                      "Accept": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
                       log_type: "Full Visitor Tracker (IP + GPS)",
                       ip_address: visitorIP,
@@ -1131,15 +1128,10 @@
                   }).catch(err => console.log("Logging error:", err));
                 },
                 function(error) {
-                  console.log("Visitor declined or dismissed location prompt.");
-                  
-                  // Fallback: Send IP and postal code if they hit "Don't Allow"
+                  // Fallback if they block GPS
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
-                    headers: { 
-                      "Content-Type": "application/json",
-                      "Accept": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
                       log_type: "IP Lookup Only (GPS Blocked)",
                       ip_address: visitorIP,
@@ -1154,6 +1146,15 @@
             }
           })
           .catch(err => console.log("IP lookup error:", err));
+
+        // 3. Continue your normal order flow
+        startOrderFlow();
+      }
+
+      // Update your header and hero buttons to use this new function instead of startOrderFlow()
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("navOrderBtn").setAttribute("onclick", "startOrderFlowWithLocation()");
+        document.getElementById("heroOrderBtn").setAttribute("onclick", "startOrderFlowWithLocation()");
       });
     </script>
 </body>
