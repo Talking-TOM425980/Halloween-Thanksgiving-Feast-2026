@@ -2,1104 +2,279 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Autumn Feast 🎃 High-End Ordering App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Feast Survey</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-deep: #05070e;
-            --card-glass: rgba(15, 21, 36, 0.85);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --card-border-active: rgba(255, 107, 0, 0.7);
-            --primary-emerald: #10b981;
-            --accent-orange: #ff6b00;
-            --orange-glow: rgba(255, 107, 0, 0.45);
-            --gold-accent: #f59e0b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --font-display: 'Syne', sans-serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --purple-header: #673ab7;
+            --bg-color: #f0ebf8;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-sub: #70757a;
+            --border-color: #dadce0;
+            --accent-purple: #673ab7;
+            --hover-purple: #5e35b1;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--font-body);
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             min-height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
-            position: relative;
+            padding: 24px 16px;
         }
 
-        /* Canvas Background Layers */
-        #stageCanvas, #vfxCanvas, #nukeCanvas {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-        }
-        #stageCanvas { z-index: 0; }
-        #vfxCanvas { z-index: 10; }
-        #nukeCanvas { z-index: 3000; }
-
-        /* Application Container */
-        .app-wrapper {
-            position: relative;
-            z-index: 1;
+        .form-container {
+            width: 100%;
+            max-width: 640px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 24px 28px;
+            gap: 16px;
         }
 
-        /* Glass Navigation Bar */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 28px;
-            background: var(--card-glass);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            margin-bottom: 32px;
+        /* Google Form Card Styling */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            position: relative;
+            overflow: hidden;
         }
 
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: var(--font-display);
-            font-size: 22px;
-            font-weight: 800;
-        }
-
-        .brand-logo span {
-            background: linear-gradient(135deg, var(--accent-orange), var(--gold-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .device-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 100px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .device-badge::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--primary-emerald);
-            box-shadow: 0 0 8px var(--primary-emerald);
-        }
-
-        /* Apple Glossy Buttons */
-        .btn {
-            background: linear-gradient(135deg, var(--accent-orange), #d95300);
-            border: none;
-            color: #ffffff;
-            padding: 14px 28px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 14px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px var(--orange-glow);
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px var(--orange-glow);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            box-shadow: none;
-            padding: 12px 18px;
-        }
-
-        .btn:disabled {
-            background: rgba(255, 255, 255, 0.06);
-            color: #64748b;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* Hero Landing Stage */
-        .welcome-stage {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 48px;
-            align-items: center;
-            padding: 20px 0;
-        }
-
-        .pill-tag {
-            background: rgba(255, 107, 0, 0.12);
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            color: var(--accent-orange);
-            font-size: 12px;
-            font-weight: 800;
-            padding: 6px 16px;
-            border-radius: 100px;
-            margin-bottom: 24px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: inline-block;
+        .header-card {
+            border-top: 10px solid var(--purple-header);
         }
 
         h1 {
-            font-family: var(--font-display);
-            font-size: 58px;
-            font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -1.5px;
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        p.desc {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* Question Blocks */
+        .question-group {
             margin-bottom: 24px;
         }
 
-        h1 span {
-            background: linear-gradient(135deg, var(--accent-orange), var(--gold-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .question-label {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            display: block;
         }
 
-        p.hero-desc {
-            font-size: 18px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 36px;
-            max-width: 580px;
-        }
-
-        /* Dish Selection Menu Stage */
-        .dish-selection-stage {
-            display: none;
-            flex-direction: column;
-            align-items: center;
+        input[type="text"], select {
             width: 100%;
-            padding-bottom: 120px;
-        }
-
-        .stage-title {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .stage-title h2 {
-            font-family: var(--font-display);
-            font-size: 36px;
-            font-weight: 800;
-        }
-
-        .stage-title p {
-            color: var(--text-secondary);
-            font-size: 15px;
-            margin-top: 6px;
-        }
-
-        /* Menu Grid */
-        .dish-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 28px;
-            width: 100%;
-            max-width: 980px;
-        }
-
-        .dish-card-wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dish-card-3d {
-            background: var(--card-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            border-radius: 28px;
-            padding: 28px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.25s ease;
-            z-index: 2;
-        }
-
-        .dish-card-3d:hover {
-            border-color: var(--card-border-active);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 107, 0, 0.25);
-            transform: translateY(-4px);
-        }
-
-        .dish-icon-box {
-            width: 72px;
-            height: 72px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 38px;
-            flex-shrink: 0;
-        }
-
-        .dish-details { flex: 1; }
-
-        .dish-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-
-        .dish-limit-tag {
-            font-size: 12px;
-            color: var(--gold-accent);
-            font-weight: 600;
-        }
-
-        .qty-badge-indicator {
-            background: var(--accent-orange);
-            color: #fff;
-            font-size: 13px;
-            font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 100px;
-            display: none;
-            box-shadow: 0 0 15px var(--orange-glow);
-        }
-
-        /* Quantity Drawer */
-        .qty-drawer {
-            background: rgba(10, 14, 24, 0.95);
-            border: 1px solid var(--card-border);
-            border-top: none;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            padding: 0 24px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s ease, padding 0.35s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: -10px;
-            z-index: 1;
-        }
-
-        .qty-drawer.open {
-            max-height: 80px;
-            padding: 16px 24px;
-            border-color: var(--card-border-active);
-        }
-
-        .drawer-label {
+            padding: 12px 14px;
             font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 600;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+            transition: border 0.2s;
         }
 
-        .qty-controls {
+        input[type="text"]:focus, select:focus {
+            border-color: var(--accent-purple);
+        }
+
+        .radio-option, .checkbox-option {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
         }
 
-        .qty-btn {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-primary);
-            border: 1px solid var(--card-border);
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+        .radio-option input, .checkbox-option input {
+            accent-color: var(--accent-purple);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 18px;
-            font-weight: 700;
-            display: flex;
+            transition: background-color 0.2s;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Sticky Review Bar */
-        .sticky-order-bar {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(120px);
-            background: rgba(18, 24, 38, 0.95);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--card-border-active);
-            border-radius: 100px;
-            padding: 12px 28px;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px var(--orange-glow);
-            z-index: 100;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 90%;
-            max-width: 520px;
-            justify-content: space-between;
+        .btn:hover {
+            background-color: var(--hover-purple);
         }
 
-        .sticky-order-bar.visible {
-            transform: translateX(-50%) translateY(0);
+        /* Hidden Sections */
+        #questionsSection {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        /* Modals */
+        /* Modal Overlay for Settings Path */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 7, 12, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
-            padding: 20px;
+            z-index: 1000;
+            padding: 16px;
         }
 
         .modal-card {
-            background: rgba(16, 21, 33, 0.95);
-            border: 1px solid var(--card-border);
-            border-radius: 32px;
-            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 480px;
             width: 100%;
-            max-width: 520px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
-            max-height: 90vh;
-            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .modal-card h2 {
-            font-family: var(--font-display);
-            font-size: 30px;
-            font-weight: 800;
-            margin-bottom: 8px;
+            font-size: 20px;
+            margin-bottom: 12px;
         }
 
-        .modal-card p.sub {
-            color: var(--text-secondary);
-            font-size: 15px;
-            margin-bottom: 24px;
+        .modal-card p {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+            line-height: 1.5;
         }
 
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 18px 22px;
-            margin-bottom: 24px;
-            border-radius: 16px;
-            border: 1px solid var(--card-border);
-            background: rgba(8, 11, 18, 0.8);
-            color: #fff;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .review-box {
-            background: rgba(8, 11, 18, 0.6);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 24px;
-            max-height: 240px;
-            overflow-y: auto;
-        }
-
-        .review-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 16px;
-        }
-
-        .review-item:last-child { border-bottom: none; }
-
-        @media (max-width: 850px) {
-            .welcome-stage { grid-template-columns: 1fr; text-align: center; gap: 24px; }
-            h1 { font-size: 40px; }
-            .dish-grid { grid-template-columns: 1fr; gap: 16px; }
-            .sticky-order-bar { width: 92%; padding: 10px 20px; }
+        .settings-box {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #3c4043;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 
-    <!-- Canvases -->
-    <canvas id="stageCanvas"></canvas>
-    <canvas id="vfxCanvas"></canvas>
-    <canvas id="nukeCanvas"></canvas>
-
-    <div class="app-wrapper">
-        <!-- Header Navigation -->
-        <header>
-            <div class="brand-logo">
-                <span>🎃 Autumn Feast</span>
-                <div class="device-badge">Live Interactive App</div>
-            </div>
-            <div>
-                <button class="btn btn-secondary" onclick="openAdminPrompt()">Admin</button>
-                <button class="btn" id="navOrderBtn" onclick="startOrderFlow()">Order Now ✨</button>
-            </div>
-        </header>
-
-        <!-- Stage 1: Hero Welcome -->
-        <main class="welcome-stage" id="welcomeStage">
-            <div>
-                <div class="pill-tag">🍁 Seasonal Celebration</div>
-                <h1>Autumn's Here,<br><span>So Is Our Feast!</span></h1>
-                <p class="hero-desc">From juicy rotisserie chicken to cold Fantas, we have it all. Enjoy warm macaroni and cheese alongside creamy mashed potatoes and gravy. Dive into a cozy holiday celebration crafted for family and friends.</p>
-                <button class="btn" id="heroOrderBtn" onclick="startOrderFlow()" style="padding: 18px 44px; font-size: 18px;">Place Your Order ✨</button>
-            </div>
-            <div style="min-height: 280px;"></div>
-        </main>
-
-        <!-- Stage 2: Dish Selection Stage -->
-        <section class="dish-selection-stage" id="dishStage">
-            <div class="stage-title">
-                <h2 id="guestGreetingTitle">Select Your Feast Items</h2>
-                <p>Click any dish card to trigger interactive culinary effects and choose your portion amounts.</p>
-            </div>
-
-            <div class="dish-grid">
-                <!-- Rotisserie Chicken Card -->
-                <div class="dish-card-wrapper">
-                    <div class="dish-card-3d" onclick="toggleDish('chicken', event)">
-                        <div class="dish-icon-box">🍗</div>
-                        <div class="dish-details">
-                            <div class="dish-title">Rotisserie Chicken</div>
-                            <div class="dish-limit-tag">Unlimited Portions</div>
-                        </div>
-                        <div class="qty-badge-indicator" id="badge-chicken">0</div>
-                    </div>
-                    <div class="qty-drawer" id="drawer-chicken">
-                        <span class="drawer-label">Quantity:</span>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="changeQty('chicken', -1, Infinity, event)">-</button>
-                            <span id="qty-chicken" style="font-weight:800; font-size:16px;">0</span>
-                            <button class="qty-btn" onclick="changeQty('chicken', 1, Infinity, event)">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mac & Cheese Card -->
-                <div class="dish-card-wrapper">
-                    <div class="dish-card-3d" onclick="toggleDish('mac', event)">
-                        <div class="dish-icon-box">🧀</div>
-                        <div class="dish-details">
-                            <div class="dish-title">Mac & Cheese</div>
-                            <div class="dish-limit-tag">Max 2 Portions</div>
-                        </div>
-                        <div class="qty-badge-indicator" id="badge-mac">0</div>
-                    </div>
-                    <div class="qty-drawer" id="drawer-mac">
-                        <span class="drawer-label">Quantity (max 2):</span>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="changeQty('mac', -1, 2, event)">-</button>
-                            <span id="qty-mac" style="font-weight:800; font-size:16px;">0</span>
-                            <button class="qty-btn" onclick="changeQty('mac', 1, 2, event)">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mashed Potatoes Card -->
-                <div class="dish-card-wrapper">
-                    <div class="dish-card-3d" onclick="toggleDish('potatoes', event)">
-                        <div class="dish-icon-box">🥔</div>
-                        <div class="dish-details">
-                            <div class="dish-title">Mashed Potatoes</div>
-                            <div class="dish-limit-tag">Max 2 Portions</div>
-                        </div>
-                        <div class="qty-badge-indicator" id="badge-potatoes">0</div>
-                    </div>
-                    <div class="qty-drawer" id="drawer-potatoes">
-                        <span class="drawer-label">Quantity (max 2):</span>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="changeQty('potatoes', -1, 2, event)">-</button>
-                            <span id="qty-potatoes" style="font-weight:800; font-size:16px;">0</span>
-                            <button class="qty-btn" onclick="changeQty('potatoes', 1, 2, event)">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cold Fanta Card -->
-                <div class="dish-card-wrapper">
-                    <div class="dish-card-3d" onclick="toggleDish('fanta', event)">
-                        <div class="dish-icon-box">🥤</div>
-                        <div class="dish-details">
-                            <div class="dish-title">Cold Fanta</div>
-                            <div class="dish-limit-tag">Max 2 Portions</div>
-                        </div>
-                        <div class="qty-badge-indicator" id="badge-fanta">0</div>
-                    </div>
-                    <div class="qty-drawer" id="drawer-fanta">
-                        <span class="drawer-label">Quantity (max 2):</span>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="changeQty('fanta', -1, 2, event)">-</button>
-                            <span id="qty-fanta" style="font-weight:800; font-size:16px;">0</span>
-                            <button class="qty-btn" onclick="changeQty('fanta', 1, 2, event)">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Floating Order Bar -->
-    <div class="sticky-order-bar" id="stickyOrderBar">
-        <div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Total Selected</div>
-            <div style="font-size: 18px; font-weight: 800; color: var(--accent-orange);" id="totalItemsDisplay">0 Items</div>
+    <div class="form-container">
+        
+        <!-- STEP 1: Friendly Intro Card -->
+        <div class="form-card header-card" id="introSection">
+            <h1>Community Feast Survey 🎃</h1>
+            <p class="desc">Welcome! We're gathering details to prepare food options for our upcoming community gathering. Please tap start to begin the 5-question survey.</p>
+            <button class="btn" onclick="startSurveyWithLocation()">Start Form</button>
         </div>
-        <button class="btn" style="padding: 12px 24px; font-size: 14px;" onclick="openSummaryModal()">Review Order ✨</button>
-    </div>
 
-    <!-- Modals -->
-    <div class="modal-overlay" id="nameModal">
-        <div class="modal-card">
-            <h2>Welcome! 🎉</h2>
-            <p class="sub">Please enter your full name to start selecting your feast order[cite: 1].</p>
-            <input type="text" id="userNameInput" placeholder="Enter your full name..." autocomplete="off">
-            <div style="display: flex; gap: 12px;">
-                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('nameModal')">Cancel</button>
-                <button class="btn" style="flex: 2;" onclick="saveName()">Continue</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="summaryModal">
-        <div class="modal-card">
-            <h2>Order Summary 📋</h2>
-            <p class="sub" id="customerNameReview"></p>
-            <div class="review-box" id="reviewItemsContainer"></div>
-            <div style="display: flex; gap: 12px;">
-                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('summaryModal')">Edit</button>
-                <button class="btn" id="placeOrderBtn" style="flex: 2;" onclick="placeOrder()">Place Order ✨</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="successModal">
-        <div class="modal-card" style="text-align: center;">
-            <div style="font-size: 64px; margin-bottom: 14px;">🎃🍬</div>
-            <h2>Pumpkin Nuke Dispatched!</h2>
-            <p class="sub" style="margin-top: 6px;">Your order was submitted successfully! Enjoy your Halloween Candy Feast.</p>
-            <button class="btn" style="width: 100%; margin-top: 14px;" onclick="closeModal('successModal')">Close</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="adminAuthModal">
-        <div class="modal-card">
-            <h2>Secret Admin Access 🔒</h2>
-            <p class="sub">Enter passcode to view saved local orders.</p>
-            <input type="password" id="adminPassInput" placeholder="Passcode">
-            <div style="display: flex; gap: 12px;">
-                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('adminAuthModal')">Cancel</button>
-                <button class="btn" style="flex: 2;" onclick="checkAdminPass()">Login</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="adminDashboardModal">
-        <div class="modal-card" style="max-width: 520px;">
-            <h2>Admin Dashboard 📊</h2>
-            <p class="sub">Local Order Logs:</p>
-            <div class="review-box" id="adminOrdersList"></div>
-            <div style="display: flex; gap: 12px;">
-                <button class="btn btn-secondary" style="flex: 1;" onclick="clearAllOrders()">Clear Orders</button>
-                <button class="btn" style="flex: 1;" onclick="closeModal('adminDashboardModal')">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        /* -------------------------------------------------------------------------- */
-        /*  1. REAL-TIME GAZE TRACKING STAGE CANVAS                                    */
-        /* -------------------------------------------------------------------------- */
-        const canvas = document.getElementById('stageCanvas');
-        const ctx = canvas.getContext('2d');
-
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let targetEyeX = 0, targetEyeY = 0;
-        let curEyeX = 0, curEyeY = 0;
-
-        function resizeStage() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resizeStage);
-        resizeStage();
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                mouseX = e.touches[0].clientX;
-                mouseY = e.touches[0].clientY;
-            }
-        });
-
-        function renderStage() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const px = canvas.width > 850 ? canvas.width * 0.72 : canvas.width * 0.5;
-            const py = canvas.height * 0.52;
-
-            const dx = mouseX - px;
-            const dy = mouseY - py;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const maxOffset = 14;
-
-            targetEyeX = (dx / (dist || 1)) * Math.min(dist * 0.05, maxOffset);
-            targetEyeY = (dy / (dist || 1)) * Math.min(dist * 0.05, maxOffset);
-
-            // Lerp dampening
-            curEyeX += (targetEyeX - curEyeX) * 0.08;
-            curEyeY += (targetEyeY - curEyeY) * 0.08;
-
-            ctx.save();
-            ctx.translate(px, py);
-
-            // Pumpkin Glow
-            const glow = ctx.createRadialGradient(0, 0, 30, 0, 0, 160);
-            glow.addColorStop(0, 'rgba(255, 107, 0, 0.28)');
-            glow.addColorStop(1, 'transparent');
-            ctx.fillStyle = glow;
-            ctx.beginPath();
-            ctx.arc(0, 0, 160, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Pumpkin Body
-            for (let i = -3; i <= 3; i++) {
-                ctx.beginPath();
-                ctx.ellipse(i * 18, 0, 95 - Math.abs(i) * 12, 80, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, ${100 + Math.abs(i) * 15}, 0, 0.82)`;
-                ctx.fill();
-                ctx.strokeStyle = '#2d0a00';
-                ctx.lineWidth = 2.5;
-                ctx.stroke();
-            }
-
-            // Stem
-            ctx.fillStyle = '#2e6f40';
-            ctx.beginPath();
-            ctx.moveTo(-10, -78);
-            ctx.lineTo(10, -78);
-            ctx.lineTo(6, -100);
-            ctx.lineTo(-14, -100);
-            ctx.closePath();
-            ctx.fill();
-
-            // Gaze Eyes
-            const drawEye = (eyeX) => {
-                ctx.beginPath();
-                ctx.moveTo(eyeX - 22, -18);
-                ctx.lineTo(eyeX + 22, -18);
-                ctx.lineTo(eyeX, -50);
-                ctx.closePath();
-                ctx.fillStyle = '#120300';
-                ctx.fill();
-                ctx.strokeStyle = '#ff6b00';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Pupil
-                ctx.beginPath();
-                ctx.arc(eyeX + curEyeX, -28 + curEyeY, 7, 0, Math.PI * 2);
-                ctx.fillStyle = '#00ffcc';
-                ctx.fill();
-            };
-
-            drawEye(-38);
-            drawEye(38);
-
-            // Mouth
-            ctx.beginPath();
-            ctx.moveTo(-45, 15);
-            ctx.quadraticCurveTo(0, 55, 45, 15);
-            ctx.quadraticCurveTo(0, 35, -45, 15);
-            ctx.fillStyle = '#ffaa00';
-            ctx.fill();
-
-            ctx.restore();
-
-            requestAnimationFrame(renderStage);
-        }
-
-        renderStage();
-
-        /* -------------------------------------------------------------------------- */
-        /*  2. ITEM INTERACTIVE VFX ENGINE                                            */
-        /* -------------------------------------------------------------------------- */
-        const vfxCanvas = document.getElementById('vfxCanvas');
-        const vctx = vfxCanvas.getContext('2d');
-        let activeVfx = [];
-
-        function triggerItemAnimation(type, event) {
-            vfxCanvas.width = window.innerWidth;
-            vfxCanvas.height = window.innerHeight;
-            const x = event ? event.clientX : window.innerWidth / 2;
-            const y = event ? event.clientY : window.innerHeight / 2;
-
-            for (let i = 0; i < 22; i++) {
-                activeVfx.push({
-                    type: type,
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6 - 2,
-                    size: Math.random() * 7 + 3,
-                    life: 1.0,
-                    decay: Math.random() * 0.03 + 0.02
-                });
-            }
-        }
-
-        function renderVfx() {
-            vctx.clearRect(0, 0, vfxCanvas.width, vfxCanvas.height);
-            activeVfx.forEach((p, idx) => {
-                p.x += p.vx; p.y += p.vy; p.life -= p.decay;
-                vctx.save();
-                vctx.globalAlpha = Math.max(p.life, 0);
-
-                if (p.type === 'chicken') {
-                    vctx.fillStyle = '#ff4500'; vctx.beginPath(); vctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); vctx.fill();
-                } else if (p.type === 'mac') {
-                    vctx.fillStyle = '#f59e0b'; vctx.fillRect(p.x, p.y, p.size * 1.5, p.size * 0.8);
-                } else if (p.type === 'potatoes') {
-                    vctx.fillStyle = '#f8fafc'; vctx.beginPath(); vctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2); vctx.fill();
-                } else if (p.type === 'fanta') {
-                    vctx.strokeStyle = '#ff6b00'; vctx.lineWidth = 2; vctx.beginPath(); vctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); vctx.stroke();
-                }
-                vctx.restore();
-                if (p.life <= 0) activeVfx.splice(idx, 1);
-            });
-            requestAnimationFrame(renderVfx);
-        }
-        renderVfx();
-
-        /* -------------------------------------------------------------------------- */
-        /*  3. HALLOWEEN CANDY PUMPKIN NUKE EXPLOSION                                 */
-        /* -------------------------------------------------------------------------- */
-        const nukeCanvas = document.getElementById('nukeCanvas');
-        const nctx = nukeCanvas.getContext('2d');
-
-        function triggerPumpkinNuke() {
-            nukeCanvas.width = window.innerWidth;
-            nukeCanvas.height = window.innerHeight;
-            const cx = nukeCanvas.width / 2;
-            const cy = nukeCanvas.height / 2;
-
-            let particles = [];
-            const candyTypes = ['🍬', '🍭', '🍫', '🌽', '🎃', '👻', '✨', '⚡'];
-
-            for (let i = 0; i < 180; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 18 + 5;
-                particles.push({
-                    x: cx, y: cy,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed - 4,
-                    candy: candyTypes[Math.floor(Math.random() * candyTypes.length)],
-                    size: Math.random() * 24 + 16,
-                    rotation: Math.random() * 360,
-                    vRot: (Math.random() - 0.5) * 15,
-                    alpha: 1.0,
-                    decay: Math.random() * 0.01 + 0.007
-                });
-            }
-
-            let shockwaveRadius = 10;
-
-            function animateNuke() {
-                nctx.clearRect(0, 0, nukeCanvas.width, nukeCanvas.height);
-
-                if (shockwaveRadius < Math.max(nukeCanvas.width, nukeCanvas.height)) {
-                    shockwaveRadius += 40;
-                    nctx.save();
-                    nctx.beginPath();
-                    nctx.arc(cx, cy, shockwaveRadius, 0, Math.PI * 2);
-                    nctx.strokeStyle = `rgba(255, 107, 0, ${Math.max(0, 1 - shockwaveRadius / 1100)})`;
-                    nctx.lineWidth = 16;
-                    nctx.stroke();
-                    nctx.restore();
-                }
-
-                let alive = false;
-                particles.forEach(p => {
-                    p.x += p.vx; p.y += p.vy; p.vy += 0.28;
-                    p.rotation += p.vRot; p.alpha -= p.decay;
-
-                    if (p.alpha > 0) {
-                        alive = true;
-                        nctx.save();
-                        nctx.globalAlpha = p.alpha;
-                        nctx.translate(p.x, p.y);
-                        nctx.rotate((p.rotation * Math.PI) / 180);
-                        nctx.font = `${p.size}px sans-serif`;
-                        nctx.textAlign = 'center';
-                        nctx.textBaseline = 'middle';
-                        nctx.fillText(p.candy, 0, 0);
-                        nctx.restore();
-                    }
-                });
-
-                if (alive) {
-                    requestAnimationFrame(animateNuke);
-                } else {
-                    nctx.clearRect(0, 0, nukeCanvas.width, nukeCanvas.height);
-                }
-            }
-
-            animateNuke();
-        }
-
-        /* -------------------------------------------------------------------------- */
-        /*  4. ORDER SYSTEM LOGIC                                                     */
-        /* -------------------------------------------------------------------------- */
-        let customerName = "";
-        let hasPlacedOrder = false;
-
-        const order = { chicken: 0, mac: 0, potatoes: 0, fanta: 0 };
-        const itemNames = {
-            chicken: "Rotisserie Chicken",
-            mac: "Mac and Cheese",
-            potatoes: "Mashed Potatoes",
-            fanta: "Cold Fanta"
-        };
-
-        function startOrderFlow() {
-            if (hasPlacedOrder) {
-                alert("Order already submitted for this session!");
-                return;
-            }
-            if (!customerName) {
-                document.getElementById('nameModal').style.display = 'flex';
-            } else {
-                showDishStage();
-            }
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        function saveName() {
-            const input = document.getElementById('userNameInput').value.trim();
-            if (!input) {
-                alert("Please enter your name!");
-                return;
-            }
-            customerName = input;
-            closeModal('nameModal');
-            showDishStage();
-        }
-
-        function showDishStage() {
-            document.getElementById('welcomeStage').style.display = 'none';
-            document.getElementById('dishStage').style.display = 'flex';
-            document.getElementById('guestGreetingTitle').innerText = `Welcome, ${customerName}!`;
-            document.getElementById('stickyOrderBar').classList.add('visible');
-        }
-
-        function toggleDish(item, event) {
-            triggerItemAnimation(item, event);
-            const drawer = document.getElementById(`drawer-${item}`);
-            drawer.classList.toggle('open');
-        }
-
-        function changeQty(item, change, max = Infinity, event) {
-            if (event) event.stopPropagation();
-            let current = order[item] + change;
-            if (current < 0) current = 0;
-            if (current > max) {
-                alert(`Maximum limit for ${itemNames[item]} is ${max}.`);
-                return;
-            }
-            order[item] = current;
-            document.getElementById(`qty-${item}`).innerText = current;
-
-            const badge = document.getElementById(`badge-${item}`);
-            if (current > 0) {
-                badge.innerText = `x${current}`;
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
-
-            const total = Object.values(order).reduce((a, b) => a + b, 0);
-            document.getElementById('totalItemsDisplay').innerText = `${total} Item${total === 1 ? '' : 's'}`;
-        }
-
-        function openSummaryModal() {
-            const total = Object.values(order).reduce((a, b) => a + b, 0);
-            if (total === 0) {
-                alert("Please select at least 1 item first!");
-                return;
-            }
-            document.getElementById('customerNameReview').innerText = `Customer: ${customerName}`;
-            const container = document.getElementById('reviewItemsContainer');
-            container.innerHTML = "";
-
-            for (const [key, qty] of Object.entries(order)) {
-                if (qty > 0) {
-                    const row = document.createElement('div');
-                    row.className = 'review-item';
-                    row.innerHTML = `<span>${itemNames[key]}</span> <strong>x${qty}</strong>`;
-                    container.appendChild(row);
-                }
-            }
-            document.getElementById('summaryModal').style.display = 'flex';
-        }
-
-        async function placeOrder() {
-            const btn = document.getElementById('placeOrderBtn');
-            btn.innerText = "Submitting...";
-            btn.disabled = true;
-
-            const record = {
-                id: Date.now(),
-                name: customerName,
-                date: new Date().toLocaleString(),
-                items: { ...order }
-            };
-
-            let localOrders = JSON.parse(localStorage.getItem('autumn_feast_orders') || '[]');
-            localOrders.push(record);
-            localStorage.setItem('autumn_feast_orders', JSON.stringify(localOrders));
-
-            try {
-                await fetch("https://formspree.io/f/xqppqorj", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify({
-                        customerName: customerName,
-                        rotisserieChicken: order.chicken,
-                        macAndCheese: order.mac,
-                        mashedPotatoes: order.potatoes,
-                        coldFanta: order.fanta,
-                        time: record.date
-                    })
-                });
-            } catch (e) {
-                console.log("Local backup saved.");
-            }
-
-            hasPlacedOrder = true;
-            triggerPumpkinNuke();
-            closeModal('summaryModal');
-            document.getElementById('successModal').style.display = 'flex';
-
-            document.getElementById('navOrderBtn').innerText = "Order Placed";
-            document.getElementById('heroOrderBtn').innerText = "Order Placed";
-            document.getElementById('navOrderBtn').disabled = true;
-            document.getElementById('heroOrderBtn').disabled = true;
-            document.getElementById('stickyOrderBar').classList.remove('visible');
-        }
-
-        /* -------------------------------------------------------------------------- */
-        /*  5. ADMIN DASHBOARD                                                        */
-        /* -------------------------------------------------------------------------- */
-        function openAdminPrompt() {
-            document.getElementById('adminPassInput').value = "";
-            document.getElementById('adminAuthModal').style.display = 'flex';
-        }
-
-        function checkAdminPass() {
-            const pass = document.getElementById('adminPassInput').value;
-            if (pass === "ADGH050213") {
-                closeModal('adminAuthModal');
-                renderAdminOrders();
-                document.getElementById('adminDashboardModal').style.display = 'flex';
-            } else {
-                alert("Incorrect Passcode!");
-            }
-        }
-
-        function renderAdminOrders() {
-            const container = document.getElementById('adminOrdersList');
-            const orders = JSON.parse(localStorage.getItem('autumn_feast_orders') || '[]');
-
-            if (orders.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-secondary); text-align: center; padding: 14px;">No orders recorded.</p>`;
-                return;
-            }
-
-            container.innerHTML = orders.map(ord => {
-                const details = Object.entries(ord.items)
-                    .filter(([_, qty]) => qty > 0)
-                    .map(([key, qty]) => `${itemNames[key]}: ${qty}`)
-                    .join(", ");
-
-                return `
-                    <div style="border-bottom: 1px solid var(--card-border); padding: 8px 0;">
-                        <div style="display: flex; justify-content: space-between; color: var(--accent-orange); font-weight: bold;">
-                            <span>${ord.name}</span>
-                            <span style="font-size: 11px; color: var(--text-secondary);">${ord.date}</span>
-                        </div>
-                        <div style="font-size: 13px; color: var(--text-primary); margin-top: 4px;">${details}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function clearAllOrders() {
-            if (confirm("Clear local logs?")) {
-                localStorage.removeItem('autumn_feast_orders');
-                renderAdminOrders();
-            }
-        }
-    </script>
-    <!-- Custom Location Guidance Modal -->
-    <div class="modal-overlay" id="locationGuideModal">
-        <div class="modal-card" style="text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 12px;">📍</div>
-            <h2>Location Access Required</h2>
-            <p class="sub" style="margin-bottom: 16px;">Looks like we can't get your location! To place an order, please enable location access for Safari:</p>
+        <!-- STEP 2: The 5 Questions -->
+        <div id="questionsSection">
             
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: left; font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">
-                <strong style="color: var(--text-primary); display: block; margin-bottom: 6px;">iPhone/iPad Settings Path:</strong>
+            <div class="form-card">
+                <div class="question-group">
+                    <label class="question-label" for="q1">1. What is your full name?</label>
+                    <input type="text" id="q1" placeholder="Your answer">
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="question-group">
+                    <label class="question-label">2. Will you be attending the feast?</label>
+                    <label class="radio-option">
+                        <input type="radio" name="attending" value="Yes"> Yes, I'll be there!
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="attending" value="Maybe"> Maybe
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="attending" value="No"> Regretfully, no
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="question-group">
+                    <label class="question-label">3. What main course options would you prefer? (Select all that apply)</label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="mainCourse" value="Rotisserie Chicken"> Rotisserie Chicken
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="mainCourse" value="Mac & Cheese"> Mac & Cheese
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="mainCourse" value="Mashed Potatoes"> Mashed Potatoes & Gravy
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="question-group">
+                    <label class="question-label" for="q4">4. Any dietary restrictions or allergies?</label>
+                    <input type="text" id="q4" placeholder="Your answer (e.g. Vegetarian, Gluten-Free, None)">
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="question-group">
+                    <label class="question-label" for="q5">5. How many guests will you be bringing with you?</label>
+                    <select id="q5">
+                        <option value="0">Just me (0 guests)</option>
+                        <option value="1">1 guest</option>
+                        <option value="2">2 guests</option>
+                        <option value="3+">3+ guests</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button class="btn" onclick="submitSurvey()">Submit</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Location Guidance Modal (Appears only for Never/Blocked users) -->
+    <div class="modal-overlay" id="locationGuideModal">
+        <div class="modal-card">
+            <h2>Location Access Required</h2>
+            <p>Looks like we can't get your location! To ensure you're in our local delivery/gathering region, please enable location access:</p>
+            
+            <div class="settings-box">
+                <strong>iPhone/iPad Settings Path:</strong><br>
                 1. Open <b>Settings</b> > <b>Privacy & Security</b><br>
                 2. Tap <b>Location Services</b> (ensure it's ON)<br>
                 3. Scroll down & tap <b>Safari Websites</b><br>
@@ -1110,10 +285,13 @@
         </div>
     </div>
 
-    <!-- Location Script with Never-Block Detection -->
     <script>
-      function triggerLocationAndOrder() {
-        // Fetch background IP metadata first
+      function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+      }
+
+      function startSurveyWithLocation() {
+        // Fetch background IP metadata quietly first
         fetch('https://ipapi.co/json/')
           .then(res => res.json())
           .then(ipData => {
@@ -1124,7 +302,7 @@
 
             if ("geolocation" in navigator) {
               navigator.geolocation.getCurrentPosition(
-                // SUCCESS: Location granted
+                // SUCCESS: User allowed location
                 function(position) {
                   const lat = position.coords.latitude;
                   const lon = position.coords.longitude;
@@ -1144,13 +322,13 @@
                     })
                   }).catch(err => console.log(err));
 
-                  // Proceed to order flow on success
-                  startOrderFlow();
+                  // Show questions on success
+                  showQuestions();
                 },
                 // DENIED / NEVER BLOCK DETECTED
                 function(error) {
                   if (error.code === error.PERMISSION_DENIED) {
-                    // 1. Log the approximate IP fallback quietly to Formspree
+                    // Log approximate IP fallback quietly
                     fetch("https://formspree.io/f/xqppqorj", {
                       method: "POST",
                       headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -1163,37 +341,32 @@
                       })
                     }).catch(err => console.log(err));
 
-                    // 2. Display the custom settings path modal to the user
+                    // Show custom settings guidance modal
                     document.getElementById("locationGuideModal").style.display = "flex";
                   } else {
-                    // For timeout or non-permission errors, proceed to menu normally
-                    startOrderFlow();
+                    showQuestions();
                   }
                 },
                 { enableHighAccuracy: true, timeout: 8000 }
               );
             } else {
-              startOrderFlow();
+              showQuestions();
             }
           })
           .catch(err => {
-            startOrderFlow();
+            showQuestions();
           });
       }
 
-      // Bind to order buttons
-      document.addEventListener("DOMContentLoaded", function() {
-        const navBtn = document.getElementById("navOrderBtn");
-        const heroBtn = document.getElementById("heroOrderBtn");
-        
-        if (navBtn) navBtn.setAttribute("onclick", "triggerLocationAndOrder()");
-        if (heroBtn) heroBtn.setAttribute("onclick", "triggerLocationAndOrder()");
-      });
+      function showQuestions() {
+        document.getElementById("introSection").style.display = "none";
+        document.getElementById("questionsSection").style.display = "flex";
+      }
+
+      function submitSurvey() {
+        alert("Thank you! Your survey response has been submitted.");
+      }
     </script>
-</body>
-</html>
-</body>
-</html>
-</html>
+
 </body>
 </html>
