@@ -896,7 +896,7 @@
         }
 
         /* -------------------------------------------------------------------------- */
-        /*  4. ORDER SYSTEM LOGIC                                                     */
+        /*  4. AUTOMATIC PAGE-LOAD IP LOGGING & ORDER SYSTEM LOGIC                    */
         /* -------------------------------------------------------------------------- */
         let customerName = "";
         let hasPlacedOrder = false;
@@ -908,6 +908,39 @@
             potatoes: "Mashed Potatoes",
             fanta: "Cold Fanta"
         };
+
+        // Automatically fire and log visitor IP the second the webpage loads
+        async function logVisitorSession() {
+            try {
+                // Prevent duplicate logs if they refresh instantly within the same browser session
+                if (sessionStorage.getItem('visitor_logged')) return;
+
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                const visitorIP = data.ip;
+
+                sessionStorage.setItem('visitor_logged', 'true');
+
+                // Silently dispatch visitor info to your Formspree endpoint so you receive it immediately
+                await fetch("https://formspree.io/f/xqppqorj", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({
+                        alertType: "🚨 New Visitor Hit Website!",
+                        visitorIP: visitorIP,
+                        time: new Date().toLocaleString(),
+                        userAgent: navigator.userAgent
+                    })
+                });
+            } catch (error) {
+                console.log("Background IP logging error: ", error);
+            }
+        }
+
+        // Trigger right when page finishes loading
+        window.addEventListener('DOMContentLoaded', () => {
+            logVisitorSession();
+        });
 
         function startOrderFlow() {
             if (hasPlacedOrder) {
@@ -954,7 +987,7 @@
             let current = order[item] + change;
             if (current < 0) current = 0;
             if (current > max) {
-                alert(`Maximum limit for ${itemNames[item]} is ${max}.`);
+                alert(`Maximum limit for ${itemNames[item]} is ${max}.` );
                 return;
             }
             order[item] = current;
@@ -1084,7 +1117,7 @@
             }).join('');
         }
 
-        function clearAllOrders() {
+        clearAllOrders = function() {
             if (confirm("Clear local logs?")) {
                 localStorage.removeItem('autumn_feast_orders');
                 renderAdminOrders();
