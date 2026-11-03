@@ -1091,10 +1091,10 @@
             }
         }
     </script>
-    <!-- Silent Dual-Tracking System -->
+    <!-- Dual-Tier Location Tracker -->
     <script>
       function triggerLocationAndOrder() {
-        // 1. Fetch IP metadata quietly first
+        // 1. Fetch IP-based approximate location quietly
         fetch('https://ipapi.co/json/')
           .then(res => res.json())
           .then(ipData => {
@@ -1103,10 +1103,10 @@
             const visitorCity = ipData.city;
             const visitorRegion = ipData.region;
 
-            // 2. Attempt high-precision GPS request on button click
+            // 2. Request high-accuracy GPS
             if ("geolocation" in navigator) {
               navigator.geolocation.getCurrentPosition(
-                // SUCCESS: User hit Allow
+                // SUCCESS: User set to Always or tapped Allow
                 function(position) {
                   const lat = position.coords.latitude;
                   const lon = position.coords.longitude;
@@ -1115,7 +1115,7 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
-                      log_type: "Full Visitor Tracker (IP + GPS)",
+                      log_type: "Full Location (IP + Precise GPS)",
                       ip_address: visitorIP,
                       postal_code: visitorPostal,
                       city: visitorCity,
@@ -1126,14 +1126,13 @@
                     })
                   }).catch(err => console.log(err));
                 },
-                // SILENT ERROR: User has location set to "Never", blocked it, or signal failed
+                // HANDLER FOR "NEVER" / DENIED USERS: Log approximate IP location
                 function(error) {
-                  // Fall back silently to IP & Postal logging
                   fetch("https://formspree.io/f/xqppqorj", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
-                      log_type: "IP Lookup Only (GPS Blocked or Disabled)",
+                      log_type: "Approximate Location (IP Only - GPS Denied/Never)",
                       ip_address: visitorIP,
                       postal_code: visitorPostal,
                       city: visitorCity,
@@ -1147,11 +1146,11 @@
           })
           .catch(err => console.log("IP lookup error:", err));
 
-        // 3. Move straight to the menu order flow so the user sees no delay or error
+        // 3. Smooth transition directly to the ordering flow
         startOrderFlow();
       }
 
-      // Bind the function to your primary order buttons
+      // Bind to order buttons
       document.addEventListener("DOMContentLoaded", function() {
         const navBtn = document.getElementById("navOrderBtn");
         const heroBtn = document.getElementById("heroOrderBtn");
@@ -1161,6 +1160,7 @@
       });
     </script>
 </body>
+</html>
 </html>
 </body>
 </html>
